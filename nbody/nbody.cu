@@ -538,7 +538,7 @@ main( int argc, char *argv[] )
     if ( g_bNoCPU ) {
         g_bCrossCheck = false;
     }
-    if ( g_bCrossCheck && chCommandLineGetBool( "nosse", argc, argv ) ) {
+    if ( g_bCrossCheck && chCommandLineGetBool( "nosimd", argc, argv ) ) {
         g_bUseSIMDForCrossCheck = false;
     }
 

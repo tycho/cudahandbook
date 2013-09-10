@@ -12,7 +12,7 @@ NVCC := nvcc
 DEBUG = 0
 
 NVCCFLAGS := -O3
-CFOPTIMIZE := -O3
+CFOPTIMIZE := -O3 -ffast-math
 
 ifneq ($(DEBUG),0)
 CFOPTIMIZE := -O0 -ggdb
@@ -34,7 +34,7 @@ CXXFLAGS += -maltivec
 endif
 ifeq ($(uname_M),armv7l)
 CFLAGS += -DHAVE_NEON
-CXXFLAGS += -marm -mfpu=neon -ffast-math
+CXXFLAGS += -marm -mfpu=neon
 endif
 ifeq ($(uname_M),x86_64)
 CFLAGS += -DHAVE_SSE

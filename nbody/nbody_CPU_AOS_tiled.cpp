@@ -53,26 +53,27 @@ DoDiagonalTile(
 {
     for ( size_t _i = 0; _i < nTile; _i++ )
     {
-        size_t i = iTile*nTile+_i;
+        const size_t i = iTile*nTile+_i;
         float acc[3] = {0, 0, 0};
-        float myX = posMass[i*4+0];
-        float myY = posMass[i*4+1];
-        float myZ = posMass[i*4+2];
+        const float myX = posMass[i*4+0];
+        const float myY = posMass[i*4+1];
+        const float myZ = posMass[i*4+2];
 
         for ( size_t _j = 0; _j < nTile; _j++ ) {
-            size_t j = jTile*nTile+_j;
+            const size_t j = jTile*nTile+_j;
 
             float fx, fy, fz;
-            float bodyX = posMass[j*4+0];
-            float bodyY = posMass[j*4+1];
-            float bodyZ = posMass[j*4+2];
-            float bodyMass = posMass[j*4+3];
+            const float bodyX = posMass[j*4+0];
+            const float bodyY = posMass[j*4+1];
+            const float bodyZ = posMass[j*4+2];
+            const float bodyMass = posMass[j*4+3];
 
             bodyBodyInteraction<float>(
                 &fx, &fy, &fz,
                 myX, myY, myZ,
                 bodyX, bodyY, bodyZ, bodyMass,
                 softeningSquared );
+
             acc[0] += fx;
             acc[1] += fy;
             acc[2] += fz;
@@ -103,20 +104,20 @@ DoNondiagonalTile(
 
     for ( size_t _i = 0; _i < nTile; _i++ )
     {
-        size_t i = iTile*nTile+_i;
+        const size_t i = iTile*nTile+_i;
         float ax = 0.0f, ay = 0.0f, az = 0.0f;
-        float myX = posMass[i*4+0];
-        float myY = posMass[i*4+1];
-        float myZ = posMass[i*4+2];
+        const float myX = posMass[i*4+0];
+        const float myY = posMass[i*4+1];
+        const float myZ = posMass[i*4+2];
 
         for ( size_t _j = 0; _j < nTile; _j++ ) {
-            size_t j = jTile*nTile+_j;
+            const size_t j = jTile*nTile+_j;
 
             float fx, fy, fz;
-            float bodyX = posMass[j*4+0];
-            float bodyY = posMass[j*4+1];
-            float bodyZ = posMass[j*4+2];
-            float bodyMass = posMass[j*4+3];
+            const float bodyX = posMass[j*4+0];
+            const float bodyY = posMass[j*4+1];
+            const float bodyZ = posMass[j*4+2];
+            const float bodyMass = posMass[j*4+3];
 
             bodyBodyInteraction<float>(
                 &fx, &fy, &fz,
@@ -131,17 +132,15 @@ DoNondiagonalTile(
             symmetricX[_j] -= fx;
             symmetricY[_j] -= fy;
             symmetricZ[_j] -= fz;
-
         }
 
         force[3*i+0] += ax;
         force[3*i+1] += ay;
         force[3*i+2] += az;
-
     }
 
     for ( size_t _j = 0; _j < nTile; _j++ ) {
-        size_t j = jTile*nTile+_j;
+        const size_t j = jTile*nTile+_j;
         force[3*j+0] += symmetricX[_j];
         force[3*j+1] += symmetricY[_j];
         force[3*j+2] += symmetricZ[_j];

@@ -57,21 +57,21 @@ ComputeGravitation_SOA(
     memset( force[1], 0, N*sizeof(float) );
     memset( force[2], 0, N*sizeof(float) );
     chTimerGetTime( &start );
-    for (size_t i = 0; i < N; i++)
+    for ( size_t i = 0; i < N; i++ )
     {
         float acc[3] = {0, 0, 0};
-        float myX = pos[0][i];
-        float myY = pos[1][i];
-        float myZ = pos[2][i];
+        const float myX = pos[0][i];
+        const float myY = pos[1][i];
+        const float myZ = pos[2][i];
 
         for ( size_t j = 0; j < i; j++ ) {
 
-            if ( j==i ) continue;
+            if ( j == i ) continue;
 
-            float bodyX = pos[0][j];
-            float bodyY = pos[1][j];
-            float bodyZ = pos[2][j];
-            float bodyMass = mass[j];
+            const float bodyX = pos[0][j];
+            const float bodyY = pos[1][j];
+            const float bodyZ = pos[2][j];
+            const float bodyMass = mass[j];
 
             float fx, fy, fz;
             bodyBodyInteraction<float>(

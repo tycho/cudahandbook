@@ -54,22 +54,23 @@ ComputeGravitation_AOS(
     for ( size_t i = 0; i < N; i++ )
     {
         float acc[3] = {0, 0, 0};
-        float myX = posMass[i*4+0];
-        float myY = posMass[i*4+1];
-        float myZ = posMass[i*4+2];
+        const float myX = posMass[i*4+0];
+        const float myY = posMass[i*4+1];
+        const float myZ = posMass[i*4+2];
 
         for ( size_t j = 0; j < N; j++ ) {
             float fx, fy, fz;
-            float bodyX = posMass[j*4+0];
-            float bodyY = posMass[j*4+1];
-            float bodyZ = posMass[j*4+2];
-            float bodyMass = posMass[j*4+3];
+            const float bodyX = posMass[j*4+0];
+            const float bodyY = posMass[j*4+1];
+            const float bodyZ = posMass[j*4+2];
+            const float bodyMass = posMass[j*4+3];
 
             bodyBodyInteraction<float>(
                 &fx, &fy, &fz,
                 myX, myY, myZ,
                 bodyX, bodyY, bodyZ, bodyMass,
                 softeningSquared );
+
             acc[0] += fx;
             acc[1] += fy;
             acc[2] += fz;

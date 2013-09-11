@@ -65,7 +65,8 @@ LDFLAGS += -static-intel
 endif
 
 ifneq ($(NO_CUDA),)
-NVCC := g++
+NVCC := $(CXX)
+NVCCFLAGS := $(CXXFLAGS)
 NVCCFLAGS += -xc++
 CFLAGS += -DNO_CUDA
 else

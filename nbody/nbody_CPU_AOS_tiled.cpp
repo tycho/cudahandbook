@@ -42,7 +42,7 @@
 
 #include "bodybodyInteraction.cuh"
 
-template<int nTile>
+template<size_t nTile>
 void
 DoDiagonalTile(
     float *force,
@@ -85,7 +85,7 @@ DoDiagonalTile(
     }
 }
 
-template<int nTile>
+template<size_t nTile>
 void
 DoNondiagonalTile(
     float *force,
@@ -147,7 +147,7 @@ DoNondiagonalTile(
     }
 }
 
-template<int nTile>
+template<size_t nTile>
 float
 ComputeGravitation_AOS_tiled(
     float *force,

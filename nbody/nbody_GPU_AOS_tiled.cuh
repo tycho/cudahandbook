@@ -37,7 +37,7 @@
 
 #if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 300
 
-template<int nTile>
+template<size_t nTile>
 __device__ void
 DoDiagonalTile_GPU( 
     float *force, 
@@ -86,7 +86,7 @@ warpReduce( float x )
     return x;
 }
 
-template<int nTile>
+template<size_t nTile>
 __device__ void
 DoNondiagonalTile_GPU( 
     float *force, 
@@ -143,7 +143,7 @@ DoNondiagonalTile_GPU(
 
 }
 
-template<int nTile>
+template<size_t nTile>
 __global__ void
 ComputeNBodyGravitation_GPU_tiled( 
     float *force, 
@@ -174,7 +174,7 @@ ComputeNBodyGravitation_GPU_tiled(
     }
 }
 
-template<int nTile>
+template<size_t nTile>
 cudaError_t
 ComputeGravitation_GPU_AOS_tiled(
     float *force, 

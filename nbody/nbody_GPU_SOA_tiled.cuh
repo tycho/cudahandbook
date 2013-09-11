@@ -35,7 +35,7 @@
  *
  */
 
-template<int nTile>
+template<size_t nTile>
 __device__ void
 DoDiagonalTile_GPU_SOA( 
     float *forceX, float *forceY, float *forceZ, 
@@ -72,7 +72,7 @@ DoDiagonalTile_GPU_SOA(
     atomicAdd( &forceZ[i], acc[2] );
 }
 
-template<int nTile>
+template<size_t nTile>
 __device__ void
 DoNondiagonalTile_GPU_SOA( 
     float *forceX, float *forceY, float *forceZ, 
@@ -130,7 +130,7 @@ DoNondiagonalTile_GPU_SOA(
 
 }
 
-template<int nTile>
+template<size_t nTile>
 __global__ void
 ComputeNBodyGravitation_GPU_SOA_tiled( 
     float *forceX, float *forceY, float *forceZ, 
@@ -153,7 +153,7 @@ ComputeNBodyGravitation_GPU_SOA_tiled(
     }
 }
 
-template<int nTile>
+template<size_t nTile>
 cudaError_t
 ComputeGravitation_GPU_SOA_tiled(
     float *forces[3], 

@@ -23,6 +23,7 @@ CFLAGS :=
 CXXFLAGS := $(CFOPTIMIZE) -fno-strict-aliasing
 
 ifeq ($(NO_OPENMP),)
+CFLAGS += -DUSE_OPENMP
 CXXFLAGS += -fopenmp
 LDFLAGS += -fopenmp
 endif

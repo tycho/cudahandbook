@@ -38,14 +38,14 @@
 
 #define HAVE_SIMD
 #define HAVE_SIMD_THREADED
-#ifdef _OPENMP
+#ifdef USE_OPENMP
 #define HAVE_SIMD_OPENMP
 #endif
 
 #elif defined(HAVE_ALTIVEC) || defined(HAVE_NEON)
 
 #define HAVE_SIMD
-#ifdef _OPENMP
+#ifdef USE_OPENMP
 #define HAVE_SIMD_OPENMP
 #endif
 

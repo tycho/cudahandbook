@@ -66,8 +66,6 @@ ComputeGravitation_SOA(
 
         for ( size_t j = 0; j < i; j++ ) {
 
-            if ( j == i ) continue;
-
             const float bodyX = pos[0][j];
             const float bodyY = pos[1][j];
             const float bodyZ = pos[2][j];

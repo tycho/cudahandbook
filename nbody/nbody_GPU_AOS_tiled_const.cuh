@@ -37,6 +37,7 @@
  *
  */
 
+#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 300
 
 template<int nTile>
 __device__ void
@@ -332,3 +333,18 @@ Error:
     CUDART_CHECK( cudaEventDestroy( evStart ) );
     return ms;
 }
+
+#else
+
+float
+ComputeGravitation_GPU_AOS_tiled_const(
+    float *force,
+    float *posMass,
+    float softeningSquared,
+    size_t N
+)
+{
+	return 0.0f;
+}
+
+#endif

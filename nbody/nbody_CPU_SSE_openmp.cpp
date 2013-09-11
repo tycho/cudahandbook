@@ -37,8 +37,6 @@
 
 #ifdef __SSE__
 #ifdef _OPENMP
-#include <xmmintrin.h>
-
 #include <chTimer.h>
 
 #include "nbody.h"

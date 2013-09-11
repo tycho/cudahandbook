@@ -105,3 +105,4 @@ bodyBodyInteraction(
     fz = _mm_add_ps( fz, _mm_mul_ps( dz, s ) );
 }
 
+/* vim: set ts=4 sts=4 sw=4 et: */

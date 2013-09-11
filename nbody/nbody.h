@@ -146,3 +146,5 @@ extern float ComputeGravitation_multiGPU_threaded    ( float *force, float *posM
 
 
 #endif
+
+/* vim: set ts=4 sts=4 sw=4 et: */

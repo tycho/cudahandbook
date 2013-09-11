@@ -152,3 +152,5 @@ ComputeGravitation_multiGPU_threaded(
     chTimerGetTime( &end );
     return chTimerElapsedTime( &start, &end ) * 1000.0f;
 }
+
+/* vim: set ts=4 sts=4 sw=4 et: */

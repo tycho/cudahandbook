@@ -88,3 +88,5 @@ ComputeGravitation_SIMD(
     return (float) chTimerElapsedTime( &start, &end ) * 1000.0f;
 }
 #endif
+
+/* vim: set ts=4 sts=4 sw=4 et: */

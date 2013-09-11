@@ -41,3 +41,5 @@ ComputeGravitation_AOS_tiled(
     float softeningSquared,
     size_t N
 );
+
+/* vim: set ts=4 sts=4 sw=4 et: */

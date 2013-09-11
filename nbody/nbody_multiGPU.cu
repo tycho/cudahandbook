@@ -8,27 +8,27 @@
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions 
- * are met: 
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- * 1. Redistributions of source code must retain the above copyright 
- *    notice, this list of conditions and the following disclaimer. 
- * 2. Redistributions in binary form must reproduce the above copyright 
- *    notice, this list of conditions and the following disclaimer in 
- *    the documentation and/or other materials provided with the 
- *    distribution. 
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
@@ -47,26 +47,26 @@
 using namespace cudahandbook::threading;
 
 __global__ void
-ComputeNBodyGravitation_multiGPU_onethread( 
-    float *force, 
-    float *posMass, 
-    float softeningSquared, 
-    size_t base, 
-    size_t n, 
+ComputeNBodyGravitation_multiGPU_onethread(
+    float *force,
+    float *posMass,
+    float softeningSquared,
+    size_t base,
+    size_t n,
     size_t N )
 {
-    ComputeNBodyGravitation_Shared_multiGPU( 
-        force, 
-        posMass, 
-        softeningSquared, 
-        base, 
+    ComputeNBodyGravitation_Shared_multiGPU(
+        force,
+        posMass,
+        softeningSquared,
+        base,
         n,
         N );
 }
 
 float
-ComputeGravitation_multiGPU_singlethread( 
-    float *force, 
+ComputeGravitation_multiGPU_singlethread(
+    float *force,
     float *posMass,
     float softeningSquared,
     size_t N
@@ -92,31 +92,31 @@ ComputeGravitation_multiGPU_singlethread(
     CUDART_CHECK( cudaGetDevice( &oldDevice ) );
 
     // kick off the asynchronous memcpy's - overlap GPUs pulling
-    // host memory with the CPU time needed to do the memory 
+    // host memory with the CPU time needed to do the memory
     // allocations.
     for ( int i = 0; i < g_numGPUs; i++ ) {
         CUDART_CHECK( cudaSetDevice( i ) );
         CUDART_CHECK( cudaMalloc( &dptrPosMass[i], 4*N*sizeof(float) ) );
         CUDART_CHECK( cudaMalloc( &dptrForce[i], 3*bodiesPerGPU*sizeof(float) ) );
-        CUDART_CHECK( cudaMemcpyAsync( 
-            dptrPosMass[i], 
-            g_hostAOS_PosMass, 
-            4*N*sizeof(float), 
+        CUDART_CHECK( cudaMemcpyAsync(
+            dptrPosMass[i],
+            g_hostAOS_PosMass,
+            4*N*sizeof(float),
             cudaMemcpyHostToDevice ) );
     }
     for ( int i = 0; i < g_numGPUs; i++ ) {
         CUDART_CHECK( cudaSetDevice( i ) );
-        ComputeNBodyGravitation_multiGPU_onethread<<<300,256,256*sizeof(float4)>>>( 
+        ComputeNBodyGravitation_multiGPU_onethread<<<300,256,256*sizeof(float4)>>>(
             dptrForce[i],
             dptrPosMass[i],
             softeningSquared,
             i*bodiesPerGPU,
             bodiesPerGPU,
             N );
-        CUDART_CHECK( cudaMemcpyAsync( 
-            g_hostAOS_Force+3*bodiesPerGPU*i, 
-            dptrForce[i], 
-            3*bodiesPerGPU*sizeof(float), 
+        CUDART_CHECK( cudaMemcpyAsync(
+            g_hostAOS_Force+3*bodiesPerGPU*i,
+            dptrForce[i],
+            3*bodiesPerGPU*sizeof(float),
             cudaMemcpyDeviceToHost ) );
     }
     // Synchronize with each GPU in turn.

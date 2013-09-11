@@ -42,42 +42,42 @@ typedef float vf32x4_t __attribute__ ((vector_size(16),aligned(1)));
 static const vf32x4_t vec_zero = {0.0f, 0.0f, 0.0f, 0.0f};
 
 typedef union {
-	float32x4_t v;
-	float f[4];
-	vf32x4_t p;
+    float32x4_t v;
+    float f[4];
+    vf32x4_t p;
 } v4;
 
 static inline vf32x4_t
 _vec_set_ps1(float f)
 {
-	v4 r;
-	r.v = vdupq_n_f32(f);
-	return r.p;
+    v4 r;
+    r.v = vdupq_n_f32(f);
+    return r.p;
 }
 
 static inline float
 _vec_sum(vf32x4_t const &v)
 {
-	float32x2_t r;
-	v4 iv;
-	iv.p = v;
-	r = vadd_f32(vget_high_f32(iv.v), vget_low_f32(iv.v));
-	return vget_lane_f32(vpadd_f32(r, r), 0);
+    float32x2_t r;
+    v4 iv;
+    iv.p = v;
+    r = vadd_f32(vget_high_f32(iv.v), vget_low_f32(iv.v));
+    return vget_lane_f32(vpadd_f32(r, r), 0);
 }
 
 static inline vf32x4_t
 rcp_sqrt_nr_ps(const vf32x4_t& _v) {
-	v4 vec, result;
-	vec.p = _v;
-	result.v = vrsqrteq_f32(vec.v);
-	result.v = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result.v, result.v), vec.v), result.v);
-	return result.p;
+    v4 vec, result;
+    vec.p = _v;
+    result.v = vrsqrteq_f32(vec.v);
+    result.v = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result.v, result.v), vec.v), result.v);
+    return result.p;
 }
 
 inline void
 bodyBodyInteraction(
     vf32x4_t& fx,
-	vf32x4_t& fy,
+    vf32x4_t& fy,
     vf32x4_t& fz,
 
     const vf32x4_t& x0,
@@ -108,9 +108,9 @@ bodyBodyInteraction(
     vf32x4_t s = mass1 * invDistCube;
 
     // (m_1 * r_01) / (d^2 + e^2)^(3/2)  [6 FLOPS]
-	fx = fx + (dx * s);
-	fy = fy + (dy * s);
-	fz = fz + (dz * s);
+    fx = fx + (dx * s);
+    fy = fy + (dy * s);
+    fz = fz + (dz * s);
 }
 
 #endif

@@ -4,7 +4,7 @@
  *
  * N-body example that illustrates gravitational simulation.
  * This is the type of computation that GPUs excel at:
- * parallelizable, with lots of FLOPS per unit of external 
+ * parallelizable, with lots of FLOPS per unit of external
  * memory bandwidth required.
  *
  * Build with: nvcc -I ../chLib <options> nbody.cu nbody_CPU_SSE.cpp nbody_CPU_SSE_threaded.cpp nbody_GPU_shared.cu nbody_multiGPU.cu nbody_multiGPU_threaded.cu
@@ -17,27 +17,27 @@
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions 
- * are met: 
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- * 1. Redistributions of source code must retain the above copyright 
- *    notice, this list of conditions and the following disclaimer. 
- * 2. Redistributions in binary form must reproduce the above copyright 
- *    notice, this list of conditions and the following disclaimer in 
- *    the documentation and/or other materials provided with the 
- *    distribution. 
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
@@ -103,7 +103,7 @@ float *g_dptrAOS_Force;
 
 
 // Buffer to hold the golden version of the forces, used for comparison
-// Along with timing results, we report the maximum relative error with 
+// Along with timing results, we report the maximum relative error with
 // respect to this array.
 float *g_hostAOS_Force_Golden;
 
@@ -206,10 +206,10 @@ bool g_bUseSIMDForCrossCheck = true;
 bool g_bNoCPU = false;
 
 bool
-ComputeGravitation( 
+ComputeGravitation(
     float *ms,
     float *maxRelError,
-    nbodyAlgorithm_enum algorithm, 
+    nbodyAlgorithm_enum algorithm,
     bool bCrossCheck )
 {
     cudaError_t status;
@@ -241,7 +241,7 @@ ComputeGravitation(
         }
         else {
 #endif
-            ComputeGravitation_AOS( 
+            ComputeGravitation_AOS(
                 g_hostAOS_Force_Golden,
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
@@ -253,23 +253,23 @@ ComputeGravitation(
 
     // CPU->GPU copies in case we are measuring GPU performance
     if ( g_bCUDAPresent ) {
-        CUDART_CHECK( cudaMemcpyAsync( 
-            g_dptrAOS_PosMass, 
-            g_hostAOS_PosMass, 
-            4*g_N*sizeof(float), 
+        CUDART_CHECK( cudaMemcpyAsync(
+            g_dptrAOS_PosMass,
+            g_hostAOS_PosMass,
+            4*g_N*sizeof(float),
             cudaMemcpyHostToDevice ) );
     }
 
     switch ( algorithm ) {
         case CPU_AOS:
-            *ms = ComputeGravitation_AOS( 
+            *ms = ComputeGravitation_AOS(
                 g_hostAOS_Force,
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
                 g_N );
             break;
         case CPU_AOS_tiled:
-            *ms = ComputeGravitation_AOS_tiled( 
+            *ms = ComputeGravitation_AOS_tiled(
                 g_hostAOS_Force,
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
@@ -319,7 +319,7 @@ ComputeGravitation(
 #endif
 #ifndef NO_CUDA
         case GPU_AOS:
-            *ms = ComputeGravitation_GPU_AOS( 
+            *ms = ComputeGravitation_GPU_AOS(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -327,7 +327,7 @@ ComputeGravitation(
             CUDART_CHECK( cudaMemcpy( g_hostAOS_Force, g_dptrAOS_Force, 3*g_N*sizeof(float), cudaMemcpyDeviceToHost ) );
             break;
         case GPU_AOS_tiled:
-            *ms = ComputeGravitation_GPU_AOS_tiled( 
+            *ms = ComputeGravitation_GPU_AOS_tiled(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -335,7 +335,7 @@ ComputeGravitation(
             CUDART_CHECK( cudaMemcpy( g_hostAOS_Force, g_dptrAOS_Force, 3*g_N*sizeof(float), cudaMemcpyDeviceToHost ) );
             break;
         case GPU_AOS_tiled_const:
-            *ms = ComputeGravitation_GPU_AOS_tiled_const( 
+            *ms = ComputeGravitation_GPU_AOS_tiled_const(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -346,7 +346,7 @@ ComputeGravitation(
 // commented out - too slow even on SM 3.0
         case GPU_Atomic:
             CUDART_CHECK( cudaMemset( g_dptrAOS_Force, 0, 3*sizeof(float) ) );
-            *ms = ComputeGravitation_GPU_Atomic( 
+            *ms = ComputeGravitation_GPU_Atomic(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -356,7 +356,7 @@ ComputeGravitation(
 #endif
         case GPU_Shared:
             CUDART_CHECK( cudaMemset( g_dptrAOS_Force, 0, 3*g_N*sizeof(float) ) );
-            *ms = ComputeGravitation_GPU_Shared( 
+            *ms = ComputeGravitation_GPU_Shared(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -365,7 +365,7 @@ ComputeGravitation(
             break;
         case GPU_Const:
             CUDART_CHECK( cudaMemset( g_dptrAOS_Force, 0, 3*g_N*sizeof(float) ) );
-            *ms = ComputeNBodyGravitation_GPU_AOS_const( 
+            *ms = ComputeNBodyGravitation_GPU_AOS_const(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -374,7 +374,7 @@ ComputeGravitation(
             break;
         case GPU_Shuffle:
             CUDART_CHECK( cudaMemset( g_dptrAOS_Force, 0, 3*g_N*sizeof(float) ) );
-            *ms = ComputeGravitation_GPU_Shuffle( 
+            *ms = ComputeGravitation_GPU_Shuffle(
                 g_dptrAOS_Force,
                 g_dptrAOS_PosMass,
                 g_softening*g_softening,
@@ -383,7 +383,7 @@ ComputeGravitation(
             break;
         case multiGPU_SingleCPUThread:
             memset( g_hostAOS_Force, 0, 3*g_N*sizeof(float) );
-            *ms = ComputeGravitation_multiGPU_singlethread( 
+            *ms = ComputeGravitation_multiGPU_singlethread(
                 g_hostAOS_Force,
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
@@ -391,7 +391,7 @@ ComputeGravitation(
             break;
         case multiGPU_MultiCPUThread:
             memset( g_hostAOS_Force, 0, 3*g_N*sizeof(float) );
-            *ms = ComputeGravitation_multiGPU_threaded( 
+            *ms = ComputeGravitation_multiGPU_threaded(
                 g_hostAOS_Force,
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
@@ -408,7 +408,7 @@ ComputeGravitation(
     if ( bSOA ) {
         for ( size_t i = 0; i < g_N; i++ ) {
             g_hostAOS_Force[3*i+0] = g_hostSOA_Force[0][i];
-            g_hostAOS_Force[3*i+1] = g_hostSOA_Force[1][i]; 
+            g_hostAOS_Force[3*i+1] = g_hostSOA_Force[1][i];
             g_hostAOS_Force[3*i+2] = g_hostSOA_Force[2][i];
         }
     }
@@ -425,7 +425,7 @@ ComputeGravitation(
         *maxRelError = max;
     }
 
-    integrateGravitation_AOS( 
+    integrateGravitation_AOS(
         g_hostAOS_PosMass,
         g_hostAOS_VelInvMass,
         g_hostAOS_Force,
@@ -460,7 +460,7 @@ initializeGPU( void *_p )
     CUDART_CHECK( cudaSetDeviceFlags( cudaDeviceMapHost ) );
     CUDART_CHECK( cudaFree(0) );
 Error:
-    p->status = status;    
+    p->status = status;
 }
 
 int
@@ -520,14 +520,14 @@ main( int argc, char *argv[] )
         }
         for ( int i = 0; i < g_numGPUs; i++ ) {
             gpuInit_struct initGPU = {i};
-            g_GPUThreadPool[i].delegateSynchronous( 
-                initializeGPU, 
+            g_GPUThreadPool[i].delegateSynchronous(
+                initializeGPU,
                 &initGPU );
             if ( cudaSuccess != initGPU.status ) {
                 fprintf( stderr, "Initializing GPU %d failed "
                     " with %d (%s)\n",
-                    i, 
-                    initGPU.status, 
+                    i,
+                    initGPU.status,
                     cudaGetErrorString( initGPU.status ) );
                 return 1;
             }
@@ -620,8 +620,8 @@ main( int argc, char *argv[] )
     // for different problem sizes.
 
     printf( "kBodies\t" );
-    for ( int algorithm = GPU_AOS; 
-              algorithm < sizeof(rgszAlgorithmNames)/sizeof(rgszAlgorithmNames[0]); 
+    for ( int algorithm = GPU_AOS;
+              algorithm < sizeof(rgszAlgorithmNames)/sizeof(rgszAlgorithmNames[0]);
               algorithm++ ) {
         printf( "%s\t", rgszAlgorithmNames[algorithm] );
     }
@@ -629,21 +629,21 @@ main( int argc, char *argv[] )
 
     for ( int kBodies = 3; kBodies <= 96; kBodies += 3 ) {
 
-	g_N = 1024*kBodies;
+        g_N = 1024*kBodies;
 
         printf( "%d\t", kBodies );
 
-	for ( int algorithm = GPU_AOS; 
-                  algorithm < sizeof(rgszAlgorithmNames)/sizeof(rgszAlgorithmNames[0]); 
+        for ( int algorithm = GPU_AOS;
+                  algorithm < sizeof(rgszAlgorithmNames)/sizeof(rgszAlgorithmNames[0]);
                   algorithm++ ) {
             float sum = 0.0f;
             const int numIterations = 10;
             for ( int i = 0; i < numIterations; i++ ) {
                 float ms, err;
-		if ( ! ComputeGravitation( &ms, &err, (nbodyAlgorithm_enum) algorithm, g_bCrossCheck ) ) {
-			fprintf( stderr, "Error computing timestep\n" );
-			exit(1);
-		}
+                if ( ! ComputeGravitation( &ms, &err, (nbodyAlgorithm_enum) algorithm, g_bCrossCheck ) ) {
+                        fprintf( stderr, "Error computing timestep\n" );
+                        exit(1);
+                }
                 sum += ms;
             }
             sum /= (float) numIterations;
@@ -653,7 +653,7 @@ main( int argc, char *argv[] )
                 printf ( "%.2f\t", interactionsPerSecond/1e9 );
             }
             else {
-                printf ( "%.3f\t", interactionsPerSecond/1e9 );               
+                printf ( "%.3f\t", interactionsPerSecond/1e9 );
             }
         }
         printf( "\n" );
@@ -673,16 +673,16 @@ main( int argc, char *argv[] )
             double interactionsPerSecond = (double) g_N*g_N*1000.0f / ms;
             if ( interactionsPerSecond > 1e9 ) {
                 printf ( "\r%s: %8.2f ms = %8.3fx10^9 interactions/s (Rel. error: %E)\n",
-                    rgszAlgorithmNames[g_Algorithm], 
-                    ms, 
-                    interactionsPerSecond/1e9, 
+                    rgszAlgorithmNames[g_Algorithm],
+                    ms,
+                    interactionsPerSecond/1e9,
                     err );
             }
             else {
                 printf ( "\r%s: %8.2f ms = %8.3fx10^6 interactions/s (Rel. error: %E)\n",
-                    rgszAlgorithmNames[g_Algorithm], 
-                    ms, 
-                    interactionsPerSecond/1e6, 
+                    rgszAlgorithmNames[g_Algorithm],
+                    ms,
+                    interactionsPerSecond/1e6,
                     err );
             }
             if (kMaxIterations) {

@@ -41,35 +41,35 @@ typedef vector float v4sf;
 static const v4sf vec_zero = {0.0f, 0.0f, 0.0f, 0.0f};
 
 typedef union {
-	float f[4];
-	v4sf p;
+    float f[4];
+    v4sf p;
 } v4;
 
 #ifndef __VSX__
 static inline v4sf
 vec_mul(v4sf x, v4sf y)
 {
-	return vec_madd(x, y, vec_zero);
+    return vec_madd(x, y, vec_zero);
 }
 #endif
 
 static inline v4sf
 _vec_set_ps1(float f)
 {
-	v4 r;
-	r.f[0] = f;
-	r.f[1] = f;
-	r.f[2] = f;
-	r.f[3] = f;
-	return r.p;
+    v4 r;
+    r.f[0] = f;
+    r.f[1] = f;
+    r.f[2] = f;
+    r.f[3] = f;
+    return r.p;
 }
 
 static inline float
 _vec_sum(v4sf v)
 {
-	v4 r;
-	r.p = v;
-	return r.f[0] + r.f[1] + r.f[2] + r.f[3];
+    v4 r;
+    r.p = v;
+    return r.f[0] + r.f[1] + r.f[2] + r.f[3];
 }
 
 static inline v4sf
@@ -77,17 +77,17 @@ rcp_sqrt_nr_ps(const v4sf x)
 {
     const v4sf
         nr      = vec_rsqrte(x),
-		muls    = vec_mul(vec_mul(nr, nr), x),
+        muls    = vec_mul(vec_mul(nr, nr), x),
         beta    = vec_mul(_vec_set_ps1(0.5f), nr),
         gamma   = vec_sub(_vec_set_ps1(3.0f), muls);
 
-	return vec_mul(beta, gamma);
+    return vec_mul(beta, gamma);
 }
 
 inline void
 bodyBodyInteraction(
     v4sf& fx,
-	v4sf& fy,
+    v4sf& fy,
     v4sf& fz,
 
     const v4sf& x0,

@@ -3,7 +3,7 @@
  * nbody_CPU_AOS_tiled.h
  *
  * Scalar CPU implementation of the O(N^2) N-body calculation.
- * Performs the computation in 32x32 tiles.
+ * Performs the computation in 128x128 tiles.
  *
  * Copyright (c) 2011-2012, Archaea Software, LLC.
  * All rights reserved.
@@ -186,7 +186,7 @@ ComputeGravitation_AOS_tiled(
     float softeningSquared,
     size_t N )
 {
-    return ComputeGravitation_AOS_tiled<32>(
+    return ComputeGravitation_AOS_tiled<128>(
         force,
         posMass,
         softeningSquared,

@@ -79,8 +79,11 @@ DoDiagonalTile(
             acc[2] += fz;
         }
 
+        #pragma omp atomic update
         force[3*i+0] += acc[0];
+        #pragma omp atomic update
         force[3*i+1] += acc[1];
+        #pragma omp atomic update
         force[3*i+2] += acc[2];
     }
 }
@@ -134,15 +137,21 @@ DoNondiagonalTile(
             symmetricZ[_j] -= fz;
         }
 
+        #pragma omp atomic update
         force[3*i+0] += ax;
+        #pragma omp atomic update
         force[3*i+1] += ay;
+        #pragma omp atomic update
         force[3*i+2] += az;
     }
 
     for ( size_t _j = 0; _j < nTile; _j++ ) {
         const size_t j = jTile*nTile+_j;
+        #pragma omp atomic update
         force[3*j+0] += symmetricX[_j];
+        #pragma omp atomic update
         force[3*j+1] += symmetricY[_j];
+        #pragma omp atomic update
         force[3*j+2] += symmetricZ[_j];
     }
 }
@@ -160,6 +169,7 @@ ComputeGravitation_AOS_tiled(
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
     for ( size_t iTile = 0; iTile < N/nTile; iTile++ ) {
+        #pragma omp parallel for
         for ( size_t jTile = 0; jTile < iTile; jTile++ ) {
             DoNondiagonalTile<nTile>(
                 force,
@@ -168,6 +178,7 @@ ComputeGravitation_AOS_tiled(
                 iTile, jTile );
         }
     }
+    #pragma omp parallel for
     for ( size_t iTile = 0; iTile < N/nTile; iTile++ ) {
         DoDiagonalTile<nTile>(
             force,

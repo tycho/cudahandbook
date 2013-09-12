@@ -148,7 +148,7 @@ DoNondiagonalTile(
 }
 
 template<size_t nTile>
-float
+static float
 ComputeGravitation_AOS_tiled(
     float *force,
     float *posMass,

@@ -160,14 +160,12 @@ ComputeGravitation_AOS_tiled(
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
     for ( size_t iTile = 0; iTile < N/nTile; iTile++ ) {
-        for ( size_t jTile = 0; jTile <= iTile; jTile++ ) {
-            if ( iTile != jTile ) {
-                DoNondiagonalTile<nTile>(
-                    force,
-                    posMass,
-                    softeningSquared,
-                    iTile, jTile );
-            }
+        for ( size_t jTile = 0; jTile < iTile; jTile++ ) {
+            DoNondiagonalTile<nTile>(
+                force,
+                posMass,
+                softeningSquared,
+                iTile, jTile );
         }
     }
     for ( size_t iTile = 0; iTile < N/nTile; iTile++ ) {

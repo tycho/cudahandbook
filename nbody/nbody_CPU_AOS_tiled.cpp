@@ -43,7 +43,7 @@
 #include "bodybodyInteraction.cuh"
 
 template<size_t nTile>
-void
+static void
 DoDiagonalTile(
     float *force,
     float *posMass,
@@ -89,7 +89,7 @@ DoDiagonalTile(
 }
 
 template<size_t nTile>
-void
+static void
 DoNondiagonalTile(
     float *force,
     float *posMass,

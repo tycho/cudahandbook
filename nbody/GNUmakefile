@@ -23,9 +23,12 @@ CFLAGS :=
 CXXFLAGS := $(CFOPTIMIZE) -fno-strict-aliasing
 
 ifeq ($(NO_OPENMP),)
+COMPILER_SUPPORTS_OPENMP := $(shell $(CXX) -fopenmp -E -dM -xc /dev/null 2>/dev/null | grep _OPENMP)
+ifneq ($(COMPILER_SUPPORTS_OPENMP),)
 CFLAGS += -DUSE_OPENMP
 CXXFLAGS += -fopenmp
 LDFLAGS += -fopenmp
+endif
 endif
 
 ifeq ($(NO_SIMD),)

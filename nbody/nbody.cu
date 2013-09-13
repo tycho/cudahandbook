@@ -147,8 +147,8 @@ void
 integrateGravitation_AOS( float *ppos, float *pvel, float *pforce, float dt, float damping, size_t N )
 {
     for ( size_t i = 0; i < N; i++ ) {
-        int index = 4*i;
-        int indexForce = 3*i;
+        const int index = 4*i;
+        const int indexForce = 3*i;
 
         float pos[3], vel[3], force[3];
         pos[0] = ppos[index+0];
@@ -518,7 +518,7 @@ main( int argc, char *argv[] )
                 return 1;
             }
         }
-        for ( int i = 0; i < g_numGPUs; i++ ) {
+        for ( size_t i = 0; i < g_numGPUs; i++ ) {
             gpuInit_struct initGPU = {i};
             g_GPUThreadPool[i].delegateSynchronous(
                 initializeGPU,
@@ -582,7 +582,7 @@ main( int argc, char *argv[] )
         }
 
         CUDART_CHECK( cudaHostAlloc( (void **) &g_hostAOS_PosMass, 4*g_N*sizeof(float), cudaHostAllocPortable|cudaHostAllocMapped ) );
-        for ( int i = 0; i < 3; i++ ) {
+        for ( size_t i = 0; i < 3; i++ ) {
             CUDART_CHECK( cudaHostAlloc( (void **) &g_hostSOA_Pos[i], g_N*sizeof(float), cudaHostAllocPortable|cudaHostAllocMapped ) );
             CUDART_CHECK( cudaHostAlloc( (void **) &g_hostSOA_Force[i], g_N*sizeof(float), cudaHostAllocPortable|cudaHostAllocMapped ) );
         }
@@ -597,7 +597,7 @@ main( int argc, char *argv[] )
     }
     else {
         g_hostAOS_PosMass = new float[4*g_N];
-        for ( int i = 0; i < 3; i++ ) {
+        for ( size_t i = 0; i < 3; i++ ) {
             g_hostSOA_Pos[i] = new float[g_N];
             g_hostSOA_Force[i] = new float[g_N];
         }

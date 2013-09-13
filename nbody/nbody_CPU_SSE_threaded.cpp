@@ -64,9 +64,9 @@ static void
 sseWorkerThread( void *_p )
 {
     sseDelegation *p = (sseDelegation *) _p;
-    for (int k = 0; k < p->n; k++)
+    for (size_t k = 0; k < p->n; k++)
     {
-        int i = p->i + k;
+        const size_t i = p->i + k;
         __m128 ax = _mm_setzero_ps();
         __m128 ay = _mm_setzero_ps();
         __m128 az = _mm_setzero_ps();
@@ -78,7 +78,7 @@ sseWorkerThread( void *_p )
         __m128 y0 = _mm_set_ps1( p->hostPosSOA[1][i] );
         __m128 z0 = _mm_set_ps1( p->hostPosSOA[2][i] );
 
-        for ( int j = 0; j < p->N/4; j++ ) {
+        for ( size_t j = 0; j < p->N/4; j++ ) {
             
             bodyBodyInteraction( 
                 ax, ay, az,

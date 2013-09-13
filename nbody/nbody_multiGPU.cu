@@ -94,7 +94,7 @@ ComputeGravitation_multiGPU_singlethread(
     // kick off the asynchronous memcpy's - overlap GPUs pulling
     // host memory with the CPU time needed to do the memory
     // allocations.
-    for ( int i = 0; i < g_numGPUs; i++ ) {
+    for ( size_t i = 0; i < g_numGPUs; i++ ) {
         CUDART_CHECK( cudaSetDevice( i ) );
         CUDART_CHECK( cudaMalloc( &dptrPosMass[i], 4*N*sizeof(float) ) );
         CUDART_CHECK( cudaMalloc( &dptrForce[i], 3*bodiesPerGPU*sizeof(float) ) );
@@ -104,7 +104,7 @@ ComputeGravitation_multiGPU_singlethread(
             4*N*sizeof(float),
             cudaMemcpyHostToDevice ) );
     }
-    for ( int i = 0; i < g_numGPUs; i++ ) {
+    for ( size_t i = 0; i < g_numGPUs; i++ ) {
         CUDART_CHECK( cudaSetDevice( i ) );
         ComputeNBodyGravitation_multiGPU_onethread<<<300,256,256*sizeof(float4)>>>(
             dptrForce[i],
@@ -120,14 +120,14 @@ ComputeGravitation_multiGPU_singlethread(
             cudaMemcpyDeviceToHost ) );
     }
     // Synchronize with each GPU in turn.
-    for ( int i = 0; i < g_numGPUs; i++ ) {
+    for ( size_t i = 0; i < g_numGPUs; i++ ) {
         CUDART_CHECK( cudaSetDevice( i ) );
         CUDART_CHECK( cudaDeviceSynchronize() );
     }
     chTimerGetTime( &end );
     ret = chTimerElapsedTime( &start, &end ) * 1000.0f;
 Error:
-    for ( int i = 0; i < g_numGPUs; i++ ) {
+    for ( size_t i = 0; i < g_numGPUs; i++ ) {
         cudaFree( dptrPosMass[i] );
         cudaFree( dptrForce[i] );
     }

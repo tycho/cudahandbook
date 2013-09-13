@@ -42,17 +42,17 @@ ComputeNBodyGravitation_Shuffle(
     size_t N )
 {
     const int laneid = threadIdx.x & 31;
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         float acc[3] = {0};
         float4 myPosMass = ((float4 *) posMass)[i];
 
-        for ( int j = 0; j < N; j += 32 ) {
+        for ( size_t j = 0; j < N; j += 32 ) {
             float4 shufSrcPosMass = ((float4 *) posMass)[j+laneid];
 #pragma unroll 32
-            for ( int k = 0; k < 32; k++ ) {
+            for ( size_t k = 0; k < 32; k++ ) {
                 float fx, fy, fz;
                 float4 shufDstPosMass;
 
@@ -87,16 +87,16 @@ ComputeNBodyGravitation_Shuffle(
 __global__ void
 ComputeNBodyGravitation_Shuffle( float *force, float *posMass, float softeningSquared, size_t N )
 {
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         float acc[3] = {0};
         float4 me = ((float4 *) posMass)[i];
         float myX = me.x;
         float myY = me.y;
         float myZ = me.z;
-        for ( int j = 0; j < N; j++ ) {
+        for ( size_t j = 0; j < N; j++ ) {
             float fx, fy, fz;
             float4 body = ((float4 *) posMass)[j];
             bodyBodyInteraction( &fx, &fy, &fz, myX, myY, myZ, body.x, body.y, body.z, body.w, softeningSquared);

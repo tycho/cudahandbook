@@ -54,7 +54,7 @@ ComputeGravitation_SIMD(
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
 
-    for (int i = 0; i < N; i++)
+    for ( size_t i = 0; i < N; i++ )
     {
         v4sf ax = vec_zero;
         v4sf ay = vec_zero;
@@ -67,7 +67,7 @@ ComputeGravitation_SIMD(
         v4sf y0 = _vec_set_ps1( pos[1][i] );
         v4sf z0 = _vec_set_ps1( pos[2][i] );
 
-        for ( int j = 0; j < N/4; j++ ) {
+        for ( size_t j = 0; j < N/4; j++ ) {
 
             bodyBodyInteraction(
                 ax, ay, az,

@@ -41,16 +41,16 @@ template<typename T>
 __global__ void
 ComputeNBodyGravitation_Atomic( T *force, T *posMass, size_t N, T softeningSquared )
 {
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         float4 me = ((float4 *) posMass)[i];
         T acc[3] = {0.0f, 0.0f, 0.0f};
         T myX = me.x;
         T myY = me.y;
         T myZ = me.z;
-        for ( int j = 0; j < i; j++ ) {
+        for ( size_t j = 0; j < i; j++ ) {
             float4 body = ((float4 *) posMass)[j];
 
             T fx, fy, fz;
@@ -81,16 +81,16 @@ template<typename T>
 __global__ void
 ComputeNBodyGravitation_Atomic( T *force, T *posMass, size_t N, T softeningSquared )
 {
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         T acc[3] = {0};
         float4 me = ((float4 *) posMass)[i];
         T myX = me.x;
         T myY = me.y;
         T myZ = me.z;
-        for ( int j = 0; j < N; j++ ) {
+        for ( size_t  j = 0; j < N; j++ ) {
             float fx, fy, fz;
             float4 body = ((float4 *) posMass)[j];
             bodyBodyInteraction( &fx, &fy, &fz, myX, myY, myZ, body.x, body.y, body.z, body.w, softeningSquared);

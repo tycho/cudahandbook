@@ -93,7 +93,7 @@ DoNondiagonalTile_GPU_SOA(
 
 //#pragma unroll
     for ( size_t _j = 0; _j < nTile; _j++ ) {
-        size_t j = jTile*nTile+_j;
+        const size_t j = jTile*nTile+_j;
 
         float fx, fy, fz;
         float4 bodyPosMass;

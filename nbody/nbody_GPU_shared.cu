@@ -45,14 +45,14 @@ ComputeNBodyGravitation_Shared(
     size_t N )
 {
     extern __shared__ float4 shPosMass[];
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         float acc[3] = {0};
         float4 myPosMass = ((float4 *) posMass)[i];
 #pragma unroll 32
-        for ( int j = 0; j < N; j += blockDim.x ) {
+        for ( size_t j = 0; j < N; j += blockDim.x ) {
             shPosMass[threadIdx.x] = ((float4 *) posMass)[j+threadIdx.x];
             __syncthreads();
             for ( size_t k = 0; k < blockDim.x; k++ ) {

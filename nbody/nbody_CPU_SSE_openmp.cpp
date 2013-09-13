@@ -56,7 +56,7 @@ ComputeGravitation_SIMD_openmp(
     chTimerGetTime( &start );
 
 #pragma omp parallel for
-    for (int i = 0; i < N; i++)
+    for ( size_t i = 0; i < N; i++ )
     {
         __m128 ax = _mm_setzero_ps();
         __m128 ay = _mm_setzero_ps();
@@ -69,7 +69,7 @@ ComputeGravitation_SIMD_openmp(
         __m128 y0 = _mm_set_ps1( pos[1][i] );
         __m128 z0 = _mm_set_ps1( pos[2][i] );
 
-        for ( int j = 0; j < N/4; j++ ) {
+        for ( size_t j = 0; j < N/4; j++ ) {
 
             bodyBodyInteraction(
                 ax, ay, az,

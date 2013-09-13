@@ -41,16 +41,16 @@ ComputeNBodyGravitation_GPU_AOS(
     size_t N,
     T softeningSquared )
 {
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         T acc[3] = {0};
         float4 me = ((float4 *) posMass)[i];
         T myX = me.x;
         T myY = me.y;
         T myZ = me.z;
-        for ( int j = 0; j < N; j++ ) {
+        for ( size_t j = 0; j < N; j++ ) {
             float4 body = ((float4 *) posMass)[j];
             float fx, fy, fz;
             bodyBodyInteraction(

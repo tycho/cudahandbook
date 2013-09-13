@@ -48,16 +48,16 @@ ComputeNBodyGravitation_GPU_AOS_const(
     size_t n,
     size_t N )
 {
-    for ( int i = blockIdx.x*blockDim.x + threadIdx.x;
-              i < N;
-              i += blockDim.x*gridDim.x )
+    for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
+                 i < N;
+                 i += blockDim.x*gridDim.x )
     {
         T acc[3] = {0};
         float4 me = ((float4 *) posMass)[i];
         T myX = me.x;
         T myY = me.y;
         T myZ = me.z;
-        for ( int j = 0; j < n; j++ ) {
+        for ( size_t j = 0; j < n; j++ ) {
             float4 body = g_constantBodies[j];
             float fx, fy, fz;
             bodyBodyInteraction(

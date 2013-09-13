@@ -51,14 +51,20 @@ ComputeGravitation_AOS(
 {
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
-    #pragma omp parallel for
+    #pragma omp parallel for shared(force)
     for ( size_t i = 0; i < N; i++ )
     {
-        float acc[3] = {0, 0, 0};
+        float acx, acy, acz;
         const float myX = posMass[i*4+0];
         const float myY = posMass[i*4+1];
         const float myZ = posMass[i*4+2];
 
+        acx = acy = acz = 0;
+
+        #pragma simd vectorlength(16) \
+            reduction(+:acx) \
+            reduction(+:acy) \
+            reduction(+:acz)
         for ( size_t j = 0; j < N; j++ ) {
 
             if ( i == j ) continue;
@@ -75,14 +81,14 @@ ComputeGravitation_AOS(
                 bodyX, bodyY, bodyZ, bodyMass,
                 softeningSquared );
 
-            acc[0] += fx;
-            acc[1] += fy;
-            acc[2] += fz;
+            acx += fx;
+            acy += fy;
+            acz += fz;
         }
 
-        force[3*i+0] = acc[0];
-        force[3*i+1] = acc[1];
-        force[3*i+2] = acc[2];
+        force[3*i+0] = acx;
+        force[3*i+1] = acy;
+        force[3*i+2] = acz;
     }
     chTimerGetTime( &end );
     return (float) chTimerElapsedTime( &start, &end ) * 1000.0f;

@@ -57,6 +57,7 @@ ComputeGravitation_SOA(
     memset( force[1], 0, N*sizeof(float) );
     memset( force[2], 0, N*sizeof(float) );
     chTimerGetTime( &start );
+#pragma omp parallel for
     for ( size_t i = 0; i < N; i++ )
     {
         float acc[3] = {0, 0, 0};
@@ -82,13 +83,19 @@ ComputeGravitation_SOA(
             acc[1] += fy;
             acc[2] += fz;
 
+#pragma omp atomic update
             force[0][j] += -fx;
+#pragma omp atomic update
             force[1][j] += -fy;
+#pragma omp atomic update
             force[2][j] += -fz;
         }
 
+#pragma omp atomic update
         force[0][i] += acc[0];
+#pragma omp atomic update
         force[1][i] += acc[1];
+#pragma omp atomic update
         force[2][i] += acc[2];
     }
     chTimerGetTime( &end );

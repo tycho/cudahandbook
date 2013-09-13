@@ -43,7 +43,7 @@ template<typename T>
 __global__ void
 ComputeNBodyGravitation_GPU_AOS_const(
     T *force,
-    T *posMass,
+    T const * const posMass,
     T softeningSquared,
     size_t n,
     size_t N )
@@ -78,7 +78,7 @@ ComputeNBodyGravitation_GPU_AOS_const(
 float
 ComputeNBodyGravitation_GPU_AOS_const(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N
 )

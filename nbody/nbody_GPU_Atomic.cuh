@@ -39,7 +39,7 @@
 //
 template<typename T>
 __global__ void
-ComputeNBodyGravitation_Atomic( T *force, T *posMass, size_t N, T softeningSquared )
+ComputeNBodyGravitation_Atomic( T *force, T const * const posMass, size_t N, T softeningSquared )
 {
     for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
                  i < N;
@@ -79,7 +79,7 @@ ComputeNBodyGravitation_Atomic( T *force, T *posMass, size_t N, T softeningSquar
 #else
 template<typename T>
 __global__ void
-ComputeNBodyGravitation_Atomic( T *force, T *posMass, size_t N, T softeningSquared )
+ComputeNBodyGravitation_Atomic( T *force, T const * const posMass, size_t N, T softeningSquared )
 {
     for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
                  i < N;
@@ -109,7 +109,7 @@ ComputeNBodyGravitation_Atomic( T *force, T *posMass, size_t N, T softeningSquar
 float
 ComputeGravitation_GPU_Atomic(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N
 )

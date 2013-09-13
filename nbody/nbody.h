@@ -140,9 +140,9 @@ extern int g_numCPUCores;
 extern int g_numGPUs;
 extern cudahandbook::threading::workerThread *g_GPUThreadPool;
 
-extern float ComputeGravitation_GPU_Shared           ( float *force, float *posMass, float softeningSquared, size_t N );
-extern float ComputeGravitation_multiGPU_singlethread( float *force, float *posMass, float softeningSquared, size_t N );
-extern float ComputeGravitation_multiGPU_threaded    ( float *force, float *posMass, float softeningSquared, size_t N );
+extern float ComputeGravitation_GPU_Shared           ( float *force, float const * const posMass, float softeningSquared, size_t N );
+extern float ComputeGravitation_multiGPU_singlethread( float *force, float const * const posMass, float softeningSquared, size_t N );
+extern float ComputeGravitation_multiGPU_threaded    ( float *force, float const * const posMass, float softeningSquared, size_t N );
 
 
 #endif

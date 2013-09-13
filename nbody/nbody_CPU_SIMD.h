@@ -54,8 +54,8 @@
 float
 ComputeGravitation_SIMD(
     float *force[3],
-    float *pos[4],
-    float *mass,
+    float const * const pos[4],
+    float const * const mass,
     float softeningSquared,
     size_t N
 );
@@ -63,8 +63,8 @@ ComputeGravitation_SIMD(
 float
 ComputeGravitation_SIMD_threaded(
     float *force[3],
-    float *pos[4],
-    float *mass,
+    float const * const pos[4],
+    float const * const mass,
     float softeningSquared,
     size_t N
 );
@@ -72,8 +72,8 @@ ComputeGravitation_SIMD_threaded(
 float
 ComputeGravitation_SIMD_openmp(
     float *force[3],
-    float *pos[4],
-    float *mass,
+    float const * const pos[4],
+    float const * const mass,
     float softeningSquared,
     size_t N
 );

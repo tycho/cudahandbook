@@ -46,8 +46,8 @@
 float
 ComputeGravitation_SIMD_openmp(
     float *force[3],
-    float *pos[4],
-    float *mass,
+    float const * const pos[4],
+    float const * const mass,
     float softeningSquared,
     size_t N
 )

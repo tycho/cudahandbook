@@ -37,7 +37,7 @@
 float
 ComputeGravitation_AOS_tiled(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N
 );

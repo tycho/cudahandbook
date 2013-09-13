@@ -37,7 +37,7 @@
 __global__ void
 ComputeNBodyGravitation_Shuffle(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N )
 {
@@ -85,7 +85,7 @@ ComputeNBodyGravitation_Shuffle(
 // If SM 3.x not available, use naive algorithm
 //
 __global__ void
-ComputeNBodyGravitation_Shuffle( float *force, float *posMass, float softeningSquared, size_t N )
+ComputeNBodyGravitation_Shuffle( float *force, float const * const posMass, float softeningSquared, size_t N )
 {
     for ( size_t i = blockIdx.x*blockDim.x + threadIdx.x;
                  i < N;
@@ -112,7 +112,7 @@ ComputeNBodyGravitation_Shuffle( float *force, float *posMass, float softeningSq
 #endif
 
 float
-ComputeGravitation_GPU_Shuffle( float *force, float *posMass, float softeningSquared, size_t N )
+ComputeGravitation_GPU_Shuffle( float *force, float const * const posMass, float softeningSquared, size_t N )
 {
     cudaError_t status;
     cudaEvent_t evStart = 0, evStop = 0;

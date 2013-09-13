@@ -53,8 +53,8 @@ struct sseDelegation {
     size_t n;   // size of this thread's problem
     size_t N;   // total number of bodies
 
-    float *hostPosSOA[3];
-    float *hostMassSOA;
+    float const *hostPosSOA[3];
+    float const *hostMassSOA;
     float *hostForceSOA[3];
     float softeningSquared;
 
@@ -101,8 +101,8 @@ sseWorkerThread( void *_p )
 float
 ComputeGravitation_SIMD_threaded(
     float *force[3], 
-    float *pos[4],
-    float *mass,
+    float const * const pos[4],
+    float const * const mass,
     float softeningSquared,
     size_t N
 )

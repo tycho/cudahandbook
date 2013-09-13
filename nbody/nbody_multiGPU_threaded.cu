@@ -48,7 +48,7 @@ using namespace cudahandbook::threading;
 __global__ void
 ComputeNBodyGravitation_multiGPU(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t base,
     size_t n,
@@ -116,7 +116,7 @@ Error:
 float
 ComputeGravitation_multiGPU_threaded(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N
 )

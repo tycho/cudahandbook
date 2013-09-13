@@ -44,7 +44,7 @@
 float
 ComputeGravitation_AOS(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N
 )

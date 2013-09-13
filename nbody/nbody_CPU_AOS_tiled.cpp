@@ -46,7 +46,7 @@ template<size_t nTile>
 static void
 DoDiagonalTile(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t iTile, size_t jTile
 )
@@ -92,7 +92,7 @@ template<size_t nTile>
 static void
 DoNondiagonalTile(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t iTile, size_t jTile
 )
@@ -160,7 +160,7 @@ template<size_t nTile>
 static float
 ComputeGravitation_AOS_tiled(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N
 )
@@ -193,7 +193,7 @@ ComputeGravitation_AOS_tiled(
 float
 ComputeGravitation_AOS_tiled(
     float *force,
-    float *posMass,
+    float const * const posMass,
     float softeningSquared,
     size_t N )
 {

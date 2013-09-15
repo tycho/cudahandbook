@@ -468,7 +468,7 @@ main( int argc, char *argv[] )
 {
     cudaError_t status;
     // kiloparticles
-    int kParticles = 4, kMaxIterations = 0;
+    int kParticles = 4, kMaxIterations = 0, kCycleAfter = 0;
 
     if ( 1 == argc ) {
         printf( "Usage: nbody --numbodies <N> [--nocpu] [--nocrosscheck] [--iterations <N>]\n" );
@@ -546,6 +546,7 @@ main( int argc, char *argv[] )
     g_N = kParticles*1024;
 
     chCommandLineGet( &kMaxIterations, "iterations", argc, argv);
+    chCommandLineGet( &kCycleAfter, "cycle", argc, argv);
 
     // Round down to the nearest multiple of the CPU count (e.g. if we have
     // a system with a CPU count that isn't a power of two, we need to round)
@@ -685,29 +686,28 @@ main( int argc, char *argv[] )
                     interactionsPerSecond/1e6,
                     err );
             }
+            kIterations++;
             if (kMaxIterations) {
-                kIterations++;
-                if (kIterations >= kMaxIterations) {
+                int kIterationRatio = kCycleAfter * (g_maxAlgorithm + 1);
+                if (!kIterationRatio)
+                    kIterationRatio = 1;
+                if (kIterations / kIterationRatio >= kMaxIterations) {
                     bStop = true;
+                }
+            }
+            if (kCycleAfter && kIterations % kCycleAfter == 0) {
+                g_Algorithm = (enum nbodyAlgorithm_enum) (g_Algorithm+1);
+                if ( g_Algorithm > g_maxAlgorithm ) {
+                    g_Algorithm = g_bNoCPU ? GPU_AOS : CPU_AOS;
                 }
             }
             if ( kbhit() ) {
                 char c = getch();
                 switch ( c ) {
                     case ' ':
-                        if ( g_Algorithm == g_maxAlgorithm ) {
+                        g_Algorithm = (enum nbodyAlgorithm_enum) (g_Algorithm+1);
+                        if ( g_Algorithm > g_maxAlgorithm ) {
                             g_Algorithm = g_bNoCPU ? GPU_AOS : CPU_AOS;
-                            // Skip slow CPU implementations if we are using SIMD for cross-check
-                            if ( g_bUseSIMDForCrossCheck ) {
-#if defined(HAVE_SIMD_THREADED)
-                                g_Algorithm = CPU_SIMD_threaded;
-#elif defined(HAVE_SIMD_OPENMP)
-                                g_Algorithm = CPU_SIMD_openmp;
-#endif
-                            }
-                        }
-                        else {
-                            g_Algorithm = (enum nbodyAlgorithm_enum) (g_Algorithm+1);
                         }
                         break;
                     case 'q':

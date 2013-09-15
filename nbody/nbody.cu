@@ -225,9 +225,9 @@ ComputeGravitation(
     }
 
     if ( bCrossCheck ) {
-#ifdef HAVE_SIMD_THREADED
+#ifdef HAVE_SIMD_OPENMP
         if ( g_bUseSIMDForCrossCheck ) {
-            ComputeGravitation_SIMD_threaded(
+            ComputeGravitation_SIMD_openmp(
                             g_hostSOA_Force,
                             g_hostSOA_Pos,
                             g_hostSOA_Mass,
@@ -246,7 +246,7 @@ ComputeGravitation(
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
                 g_N );
-#ifdef HAVE_SIMD_THREADED
+#ifdef HAVE_SIMD_OPENMP
         }
 #endif
     }

@@ -524,7 +524,7 @@ main( int argc, char *argv[] )
                 initializeGPU,
                 &initGPU );
             if ( cudaSuccess != initGPU.status ) {
-                fprintf( stderr, "Initializing GPU %d failed "
+                fprintf( stderr, "Initializing GPU %zu failed "
                     " with %d (%s)\n",
                     i,
                     initGPU.status,

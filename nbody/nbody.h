@@ -70,6 +70,7 @@ enum nbodyAlgorithm_enum {
     CPU_AOS = 0,    /* This is the golden implementation */
     CPU_AOS_tiled,
     CPU_SOA,
+    CPU_SOA_tiled,
 #ifdef HAVE_SIMD
     CPU_SIMD,
 #endif
@@ -90,6 +91,7 @@ static const char *rgszAlgorithmNames[] = {
     "CPU_AOS",
     "CPU_AOS_tiled",
     "CPU_SOA",
+    "CPU_SOA_tiled",
 #ifdef HAVE_SIMD
     "CPU_SIMD",
 #endif

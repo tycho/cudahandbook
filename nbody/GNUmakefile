@@ -91,6 +91,7 @@ SOURCES := \
 	nbody_CPU_AOS.cpp \
 	nbody_CPU_AOS_tiled.cpp \
 	nbody_CPU_SOA.cpp \
+	nbody_CPU_SOA_tiled.cpp \
 	nbody_CPU_AltiVec.cpp \
 	nbody_CPU_NEON.cpp \
 	nbody_CPU_SSE.cpp

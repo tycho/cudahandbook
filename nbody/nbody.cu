@@ -129,6 +129,7 @@ relError( T a, T b )
 #include "nbody_CPU_AOS.h"
 #include "nbody_CPU_AOS_tiled.h"
 #include "nbody_CPU_SOA.h"
+#include "nbody_CPU_SOA_tiled.h"
 #include "nbody_CPU_SIMD.h"
 
 #ifndef NO_CUDA
@@ -275,6 +276,15 @@ ComputeGravitation(
             break;
         case CPU_SOA:
             *ms = ComputeGravitation_SOA(
+                g_hostSOA_Force,
+                g_hostSOA_Pos,
+                g_hostSOA_Mass,
+                g_softening*g_softening,
+                g_N );
+            bSOA = true;
+            break;
+        case CPU_SOA_tiled:
+            *ms = ComputeGravitation_SOA_tiled(
                 g_hostSOA_Force,
                 g_hostSOA_Pos,
                 g_hostSOA_Mass,

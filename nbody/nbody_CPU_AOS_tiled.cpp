@@ -54,11 +54,17 @@ DoDiagonalTile(
     for ( size_t _i = 0; _i < nTile; _i++ )
     {
         const size_t i = iTile*nTile+_i;
-        float acc[3] = {0, 0, 0};
+        float acx, acy, acz;
         const float myX = posMass[i*4+0];
         const float myY = posMass[i*4+1];
         const float myZ = posMass[i*4+2];
 
+        acx = acy = acz = 0;
+
+        #pragma simd vectorlength(16) \
+            reduction(+:acx) \
+            reduction(+:acy) \
+            reduction(+:acz)
         for ( size_t _j = 0; _j < nTile; _j++ ) {
             const size_t j = jTile*nTile+_j;
 
@@ -74,17 +80,17 @@ DoDiagonalTile(
                 bodyX, bodyY, bodyZ, bodyMass,
                 softeningSquared );
 
-            acc[0] += fx;
-            acc[1] += fy;
-            acc[2] += fz;
+            acx += fx;
+            acy += fy;
+            acz += fz;
         }
 
         #pragma omp atomic update
-        force[3*i+0] += acc[0];
+        force[3*i+0] += acx;
         #pragma omp atomic update
-        force[3*i+1] += acc[1];
+        force[3*i+1] += acy;
         #pragma omp atomic update
-        force[3*i+2] += acc[2];
+        force[3*i+2] += acz;
     }
 }
 

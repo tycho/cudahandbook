@@ -46,26 +46,25 @@
 float
 ComputeGravitation_SOA(
     float *force[3],
-    float const * const pos[4],
+    float const * const pos[3],
     float const * const mass,
     float softeningSquared,
     size_t N
 )
 {
     chTimerTimestamp start, end;
-    memset( force[0], 0, N*sizeof(float) );
-    memset( force[1], 0, N*sizeof(float) );
-    memset( force[2], 0, N*sizeof(float) );
     chTimerGetTime( &start );
 #pragma omp parallel for
     for ( size_t i = 0; i < N; i++ )
     {
-        float acc[3] = {0, 0, 0};
+        float acx, acy, acz;
         const float myX = pos[0][i];
         const float myY = pos[1][i];
         const float myZ = pos[2][i];
 
-        for ( size_t j = 0; j < i; j++ ) {
+        acx = acy = acz = 0;
+
+        for ( size_t j = 0; j < N; j++ ) {
 
             const float bodyX = pos[0][j];
             const float bodyY = pos[1][j];
@@ -79,24 +78,14 @@ ComputeGravitation_SOA(
                 bodyX, bodyY, bodyZ, bodyMass,
                 softeningSquared );
 
-            acc[0] += fx;
-            acc[1] += fy;
-            acc[2] += fz;
-
-#pragma omp atomic update
-            force[0][j] += -fx;
-#pragma omp atomic update
-            force[1][j] += -fy;
-#pragma omp atomic update
-            force[2][j] += -fz;
+            acx += fx;
+            acy += fy;
+            acz += fz;
         }
 
-#pragma omp atomic update
-        force[0][i] += acc[0];
-#pragma omp atomic update
-        force[1][i] += acc[1];
-#pragma omp atomic update
-        force[2][i] += acc[2];
+        force[0][i] = acx;
+        force[1][i] = acy;
+        force[2][i] = acz;
     }
     chTimerGetTime( &end );
     return (float) chTimerElapsedTime( &start, &end ) * 1000.0f;

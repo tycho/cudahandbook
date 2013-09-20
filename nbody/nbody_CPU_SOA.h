@@ -38,7 +38,7 @@
 float
 ComputeGravitation_SOA(
     float *force[3],
-    float const * const pos[4],
+    float const * const pos[3],
     float const * const mass,
     float softeningSquared,
     size_t N

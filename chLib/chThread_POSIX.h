@@ -48,6 +48,9 @@
 #include <memory>
 #include <vector>
 #include <stdint.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #ifdef __MACH__
 #define USE_NAMED_SEMAPHORES
@@ -60,7 +63,19 @@ namespace threading {
 inline unsigned int
 processorCount()
 {
+#ifdef _OPENMP
+    int k;
+#  pragma omp parallel
+    {
+#  pragma omp master
+        {
+            k = omp_get_num_threads();
+        }
+    }
+    return k;
+#else
     return sysconf( _SC_NPROCESSORS_ONLN );
+#endif
 }
 
 class Semaphore

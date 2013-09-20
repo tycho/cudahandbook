@@ -2,6 +2,8 @@ BIN := nbody
 
 all: $(BIN)
 
+SHELL := /bin/bash
+
 uname_S := $(shell uname -s 2>/dev/null || echo "not")
 uname_M := $(shell uname -m 2>/dev/null || echo "not")
 uname_O := $(shell uname -o 2>/dev/null || echo "not")
@@ -28,8 +30,17 @@ ifneq ($(COMPILER_SUPPORTS_OPENMP),)
 CFLAGS += -DUSE_OPENMP
 CXXFLAGS += -fopenmp
 LDFLAGS += -fopenmp
-endif
-endif
+LIBIOMP5_FOUND := $(shell gcc -o /dev/null -xc <(echo "int main() { }") -liomp5 2>/dev/null && echo Yes)
+ifeq ($(LIBIOMP5_FOUND),Yes)
+LDFLAGS += -liomp5
+else
+LIBIOMP5_PATH := $(shell ldconfig -N -v 2>/dev/null | awk '{ if (NF == 1) { sub(/:$$/, "", $$1); path=$$1; } else if (match($$1, /^libiomp5.so$$/)) { print path; } }' )
+ifneq ($(LIBIOMP5_PATH),)
+LDFLAGS += -L$(LIBIOMP5_PATH) -liomp5
+endif # LIBIOMP5_PATH
+endif # LIBIOMP5_FOUND
+endif # COMPILER_SUPPORTS_OPENMP
+endif # NO_OPENMP
 
 ifeq ($(NO_SIMD),)
 ifeq ($(uname_M),ppc)

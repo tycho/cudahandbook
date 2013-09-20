@@ -2,7 +2,7 @@
  *
  * nbody_CPU_SSE.cpp
  *
- * SSE CPU implementation of the O(N^2) N-body calculation.
+ * Multithreaded SSE CPU implementation of the O(N^2) N-body calculation.
  * Uses SOA (structure of arrays) representation because it is a much
  * better fit for SSE.
  *
@@ -36,11 +36,9 @@
  */
 
 #ifdef __SSE__
-
-#include <xmmintrin.h>
-
 #include <chTimer.h>
 
+#include "nbody.h"
 #include "bodybodyInteraction_SSE.h"
 #include "nbody_CPU_SIMD.h"
 
@@ -56,6 +54,7 @@ ComputeGravitation_SIMD(
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
 
+#pragma omp parallel for
     for ( size_t i = 0; i < N; i++ )
     {
         __m128 ax = _mm_setzero_ps();
@@ -87,10 +86,11 @@ ComputeGravitation_SIMD(
         _mm_store_ss( (float *) &force[1][i], ay );
         _mm_store_ss( (float *) &force[2][i], az );
     }
+
     chTimerGetTime( &end );
+
     return (float) chTimerElapsedTime( &start, &end ) * 1000.0f;
 }
-
 #endif
 
 /* vim: set ts=4 sts=4 sw=4 et: */

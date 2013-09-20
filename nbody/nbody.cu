@@ -193,7 +193,7 @@ enum nbodyAlgorithm_enum g_Algorithm;
 
 //
 // g_maxAlgorithm is used to determine when to rotate g_Algorithm back to CPU_AOS
-// If CUDA is present, it is CPU_SIMD_threaded, otherwise it depends on SM version
+// If CUDA is present, it depends on SM version
 //
 // The shuffle and tiled implementations are SM 3.0 only.
 //
@@ -225,9 +225,9 @@ ComputeGravitation(
     }
 
     if ( bCrossCheck ) {
-#ifdef HAVE_SIMD_OPENMP
+#ifdef HAVE_SIMD
         if ( g_bUseSIMDForCrossCheck ) {
-            ComputeGravitation_SIMD_openmp(
+            ComputeGravitation_SIMD(
                             g_hostSOA_Force,
                             g_hostSOA_Pos,
                             g_hostSOA_Mass,
@@ -246,7 +246,7 @@ ComputeGravitation(
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
                 g_N );
-#ifdef HAVE_SIMD_OPENMP
+#ifdef HAVE_SIMD
         }
 #endif
     }
@@ -287,28 +287,6 @@ ComputeGravitation(
 #ifdef HAVE_SIMD
         case CPU_SIMD:
             *ms = ComputeGravitation_SIMD(
-                g_hostSOA_Force,
-                g_hostSOA_Pos,
-                g_hostSOA_Mass,
-                g_softening*g_softening,
-                g_N );
-            bSOA = true;
-            break;
-#endif
-#ifdef HAVE_SIMD_THREADED
-        case CPU_SIMD_threaded:
-            *ms = ComputeGravitation_SIMD_threaded(
-                g_hostSOA_Force,
-                g_hostSOA_Pos,
-                g_hostSOA_Mass,
-                g_softening*g_softening,
-                g_N );
-            bSOA = true;
-            break;
-#endif
-#ifdef HAVE_SIMD_OPENMP
-        case CPU_SIMD_openmp:
-            *ms = ComputeGravitation_SIMD_openmp(
                 g_hostSOA_Force,
                 g_hostSOA_Pos,
                 g_hostSOA_Mass,
@@ -556,11 +534,7 @@ main( int argc, char *argv[] )
         g_bCrossCheck ? "enabled" : "disabled",
         g_bNoCPU ? "disabled" : "enabled" );
 
-#if defined(HAVE_SIMD_OPENMP)
-    g_maxAlgorithm = CPU_SIMD_openmp;
-#elif defined(HAVE_SIMD_THREADED)
-    g_maxAlgorithm = CPU_SIMD_threaded;
-#elif defined(HAVE_SIMD)
+#if defined(HAVE_SIMD)
     g_maxAlgorithm = CPU_SIMD;
 #else
     g_maxAlgorithm = CPU_SOA;

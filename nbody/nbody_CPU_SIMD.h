@@ -34,43 +34,12 @@
  *
  */
 
-#if defined(HAVE_SSE)
-
+#if defined(HAVE_SSE) || defined(HAVE_ALTIVEC) || defined(HAVE_NEON)
 #define HAVE_SIMD
-#define HAVE_SIMD_THREADED
-#ifdef USE_OPENMP
-#define HAVE_SIMD_OPENMP
-#endif
-
-#elif defined(HAVE_ALTIVEC) || defined(HAVE_NEON)
-
-#define HAVE_SIMD
-#ifdef USE_OPENMP
-#define HAVE_SIMD_OPENMP
-#endif
-
 #endif
 
 float
 ComputeGravitation_SIMD(
-    float *force[3],
-    float const * const pos[4],
-    float const * const mass,
-    float softeningSquared,
-    size_t N
-);
-
-float
-ComputeGravitation_SIMD_threaded(
-    float *force[3],
-    float const * const pos[4],
-    float const * const mass,
-    float softeningSquared,
-    size_t N
-);
-
-float
-ComputeGravitation_SIMD_openmp(
     float *force[3],
     float const * const pos[4],
     float const * const mass,

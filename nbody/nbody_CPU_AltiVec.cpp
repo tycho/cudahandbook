@@ -40,7 +40,7 @@
 
 #include "nbody.h"
 #include "bodybodyInteraction_AltiVec.h"
-#include "nbody_CPU_SIMD.h"
+#include "nbody_CPU_SSE.h"
 
 float
 ComputeGravitation_SIMD(
@@ -54,6 +54,7 @@ ComputeGravitation_SIMD(
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
 
+#pragma omp parallel for
     for ( size_t i = 0; i < N; i++ )
     {
         v4sf ax = vec_zero;

@@ -73,12 +73,6 @@ enum nbodyAlgorithm_enum {
 #ifdef HAVE_SIMD
     CPU_SIMD,
 #endif
-#ifdef HAVE_SIMD_THREADED
-    CPU_SIMD_threaded,
-#endif
-#ifdef HAVE_SIMD_OPENMP
-    CPU_SIMD_openmp,
-#endif
     GPU_AOS,
     GPU_Shared,
     GPU_Const,
@@ -98,12 +92,6 @@ static const char *rgszAlgorithmNames[] = {
     "CPU_SOA",
 #ifdef HAVE_SIMD
     "CPU_SIMD",
-#endif
-#ifdef HAVE_SIMD_THREADED
-    "CPU_SIMD_threaded",
-#endif
-#ifdef HAVE_SIMD_OPENMP
-    "CPU_SIMD_openmp",
 #endif
     "GPU_AOS",
     "GPU_Shared",

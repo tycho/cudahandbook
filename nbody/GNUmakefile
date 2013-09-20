@@ -93,15 +93,7 @@ SOURCES := \
 	nbody_CPU_SOA.cpp \
 	nbody_CPU_AltiVec.cpp \
 	nbody_CPU_NEON.cpp \
-	nbody_CPU_SSE.cpp \
-	nbody_CPU_SSE_threaded.cpp
-
-ifeq ($(NO_OPENMP),)
-SOURCES += \
-	nbody_CPU_AltiVec_openmp.cpp \
-	nbody_CPU_NEON_openmp.cpp \
-	nbody_CPU_SSE_openmp.cpp
-endif
+	nbody_CPU_SSE.cpp
 
 ifeq ($(NO_CUDA),)
 SOURCES += \

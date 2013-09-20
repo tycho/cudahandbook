@@ -61,7 +61,7 @@ DoDiagonalTile(
 
         acx = acy = acz = 0;
 
-        #pragma simd vectorlength(16) \
+        #pragma simd vectorlengthfor(float) \
             reduction(+:acx) \
             reduction(+:acy) \
             reduction(+:acz)

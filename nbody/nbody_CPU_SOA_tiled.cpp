@@ -3,7 +3,7 @@
  * nbody_CPU_SOA_tiled.cpp
  *
  * Scalar CPU implementation of the O(N^2) N-body calculation.
- * Performs the computation in 128x128 tiles.
+ * Performs the computation in 1024x1024 tiles.
  *
  * Copyright (c) 2011-2012, Archaea Software, LLC.
  * All rights reserved.
@@ -212,7 +212,7 @@ ComputeGravitation_SOA_tiled(
     size_t N
 )
 {
-    return ComputeGravitation_SOA_tiled<128>(
+    return ComputeGravitation_SOA_tiled<1024>(
         force,
         pos,
         mass,

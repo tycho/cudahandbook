@@ -51,7 +51,7 @@ ComputeGravitation_AOS(
 {
     chTimerTimestamp start, end;
     chTimerGetTime( &start );
-    #pragma omp parallel for shared(force)
+    #pragma omp parallel for
     for ( size_t i = 0; i < N; i++ )
     {
         float acx, acy, acz;

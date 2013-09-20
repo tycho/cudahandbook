@@ -64,6 +64,10 @@ ComputeGravitation_SOA(
 
         acx = acy = acz = 0;
 
+        #pragma simd vectorlength(16) \
+            reduction(+:acx) \
+            reduction(+:acy) \
+            reduction(+:acz)
         for ( size_t j = 0; j < N; j++ ) {
 
             const float bodyX = pos[0][j];

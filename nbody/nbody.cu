@@ -7,8 +7,6 @@
  * parallelizable, with lots of FLOPS per unit of external
  * memory bandwidth required.
  *
- * Build with: nvcc -I ../chLib <options> nbody.cu nbody_CPU_SSE.cpp nbody_CPU_SSE_threaded.cpp nbody_GPU_shared.cu nbody_multiGPU.cu nbody_multiGPU_threaded.cu
- *   On Linux: nvcc -I ../chLib <options> nbody.cu nbody_CPU_SSE.cpp nbody_CPU_SSE_threaded.cpp nbody_GPU_shared.cu nbody_multiGPU.cu nbody_multiGPU_threaded.cu -lpthread -lrt
  * Requires: No minimum SM requirement.  If SM 3.x is not available,
  * this application quietly replaces the shuffle and fast-atomic
  * implementations with the shared memory implementation.

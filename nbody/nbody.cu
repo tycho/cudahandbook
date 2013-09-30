@@ -545,7 +545,7 @@ main( int argc, char *argv[] )
 #if defined(HAVE_SIMD)
     g_maxAlgorithm = CPU_SIMD;
 #else
-    g_maxAlgorithm = CPU_SOA;
+    g_maxAlgorithm = CPU_SOA_tiled;
 #endif
     g_Algorithm = g_bCUDAPresent ? GPU_AOS : g_maxAlgorithm;
     if ( g_bCUDAPresent || g_bNoCPU ) {

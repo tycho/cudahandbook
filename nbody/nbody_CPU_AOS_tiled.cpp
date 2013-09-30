@@ -203,6 +203,9 @@ ComputeGravitation_AOS_tiled(
     float softeningSquared,
     size_t N )
 {
+    if (N % 1024 != 0)
+        return 0.0f;
+
     return ComputeGravitation_AOS_tiled<1024>(
         force,
         posMass,

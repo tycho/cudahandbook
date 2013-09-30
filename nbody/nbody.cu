@@ -250,6 +250,12 @@ ComputeGravitation(
 #endif
     }
 
+    /* Reset the force values so we know the function tested did work. */
+    memset(g_hostAOS_Force,    0, g_N * sizeof(float) * 3);
+    memset(g_hostSOA_Force[0], 0, g_N * sizeof(float));
+    memset(g_hostSOA_Force[1], 0, g_N * sizeof(float));
+    memset(g_hostSOA_Force[2], 0, g_N * sizeof(float));
+
     // CPU->GPU copies in case we are measuring GPU performance
     if ( g_bCUDAPresent ) {
         CUDART_CHECK( cudaMemcpyAsync(

@@ -547,7 +547,7 @@ main( int argc, char *argv[] )
 #else
     g_maxAlgorithm = CPU_SOA_tiled;
 #endif
-    g_Algorithm = g_bCUDAPresent ? GPU_AOS : g_maxAlgorithm;
+    g_Algorithm = g_bCUDAPresent ? GPU_AOS : CPU_SOA;
     if ( g_bCUDAPresent || g_bNoCPU ) {
         // max algorithm is different depending on whether SM 3.0 is present
         g_maxAlgorithm = g_bSM30Present ? GPU_AOS_tiled_const : multiGPU_MultiCPUThread;

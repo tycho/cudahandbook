@@ -47,7 +47,7 @@
 using namespace cudahandbook::threading;
 
 __global__ void
-ComputeNBodyGravitation_multiGPU_onethread(
+ComputeNBodyGravitation_multiGPU(
     float *force,
     float const * const posMass,
     float softeningSquared,
@@ -65,7 +65,7 @@ ComputeNBodyGravitation_multiGPU_onethread(
 }
 
 float
-ComputeGravitation_multiGPU_singlethread(
+ComputeGravitation_multiGPU(
     float *force,
     float const * const posMass,
     float softeningSquared,
@@ -106,7 +106,7 @@ ComputeGravitation_multiGPU_singlethread(
     }
     for ( size_t i = 0; i < g_numGPUs; i++ ) {
         CUDART_CHECK( cudaSetDevice( i ) );
-        ComputeNBodyGravitation_multiGPU_onethread<<<300,256,256*sizeof(float4)>>>(
+        ComputeNBodyGravitation_multiGPU<<<300,256,256*sizeof(float4)>>>(
             dptrForce[i],
             dptrPosMass[i],
             softeningSquared,

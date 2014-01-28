@@ -110,8 +110,7 @@ SOURCES := \
 ifeq ($(NO_CUDA),)
 SOURCES += \
 	nbody_GPU_shared.cu \
-	nbody_multiGPU.cu \
-	nbody_multiGPU_threaded.cu
+	nbody_multiGPU.cu
 endif
 
 OBJECTS := $(SOURCES:%.cu=%.o)

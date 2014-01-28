@@ -77,8 +77,7 @@ enum nbodyAlgorithm_enum {
     GPU_AOS,
     GPU_Shared,
     GPU_Const,
-    multiGPU_SingleCPUThread,
-    multiGPU_MultiCPUThread,
+    multiGPU,
 // SM 3.0 only
     GPU_Shuffle,
     GPU_AOS_tiled,
@@ -98,8 +97,7 @@ static const char *rgszAlgorithmNames[] = {
     "GPU_AOS",
     "GPU_Shared",
     "GPU_Const",
-    "multiGPU_SingleCPUThread",
-    "multiGPU_MultiCPUThread",
+    "multiGPU",
 // SM 3.0 only
     "GPU_Shuffle",
     "GPU_AOS_tiled",
@@ -130,9 +128,8 @@ extern int g_numCPUCores;
 extern int g_numGPUs;
 extern cudahandbook::threading::workerThread *g_GPUThreadPool;
 
-extern float ComputeGravitation_GPU_Shared           ( float *force, float const * const posMass, float softeningSquared, size_t N );
-extern float ComputeGravitation_multiGPU_singlethread( float *force, float const * const posMass, float softeningSquared, size_t N );
-extern float ComputeGravitation_multiGPU_threaded    ( float *force, float const * const posMass, float softeningSquared, size_t N );
+extern float ComputeGravitation_GPU_Shared( float *force, float const * const posMass, float softeningSquared, size_t N );
+extern float ComputeGravitation_multiGPU  ( float *force, float const * const posMass, float softeningSquared, size_t N );
 
 
 #endif

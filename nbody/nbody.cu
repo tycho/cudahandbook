@@ -373,17 +373,9 @@ ComputeGravitation(
                 g_N );
             CUDART_CHECK( cudaMemcpy( g_hostAOS_Force, g_dptrAOS_Force, 3*g_N*sizeof(float), cudaMemcpyDeviceToHost ) );
             break;
-        case multiGPU_SingleCPUThread:
+        case multiGPU:
             memset( g_hostAOS_Force, 0, 3*g_N*sizeof(float) );
-            *ms = ComputeGravitation_multiGPU_singlethread(
-                g_hostAOS_Force,
-                g_hostAOS_PosMass,
-                g_softening*g_softening,
-                g_N );
-            break;
-        case multiGPU_MultiCPUThread:
-            memset( g_hostAOS_Force, 0, 3*g_N*sizeof(float) );
-            *ms = ComputeGravitation_multiGPU_threaded(
+            *ms = ComputeGravitation_multiGPU(
                 g_hostAOS_Force,
                 g_hostAOS_PosMass,
                 g_softening*g_softening,
@@ -552,7 +544,7 @@ main( int argc, char *argv[] )
     g_Algorithm = g_bCUDAPresent ? GPU_AOS : CPU_SOA;
     if ( g_bCUDAPresent || g_bNoCPU ) {
         // max algorithm is different depending on whether SM 3.0 is present
-        g_maxAlgorithm = g_bSM30Present ? GPU_AOS_tiled_const : multiGPU_MultiCPUThread;
+        g_maxAlgorithm = g_bSM30Present ? GPU_AOS_tiled_const : multiGPU;
     }
 
     if ( g_bCUDAPresent ) {
@@ -563,7 +555,7 @@ main( int argc, char *argv[] )
         if ( propForVersion.major < 3 ) {
             // Only SM 3.x supports shuffle and fast atomics, so we cannot run
             // some algorithms on this board.
-            g_maxAlgorithm = multiGPU_MultiCPUThread;
+            g_maxAlgorithm = multiGPU;
         }
 
         CUDART_CHECK( cudaHostAlloc( (void **) &g_hostAOS_PosMass, 4*g_N*sizeof(float), cudaHostAllocPortable|cudaHostAllocMapped ) );
@@ -658,7 +650,7 @@ main( int argc, char *argv[] )
             double interactionsPerSecond = (double) g_N*g_N*1000.0f / ms,
                    flops = (g_N * g_N * (3 + 6 + 4 + 1 + 6)) * 1000.0f / ms;
             if ( interactionsPerSecond > 1e9 ) {
-                printf ( "\r%16s: %8.2f ms = %8.3fx10^9 interactions/s (%9.2lf GFLOPS) (Rel. error: %E)\n",
+                printf ( "\r%13s: %8.2f ms = %8.3fx10^9 interactions/s (%9.2lf GFLOPS) (Rel. error: %E)\n",
                     rgszAlgorithmNames[g_Algorithm],
                     ms,
                     interactionsPerSecond/1e9,
@@ -666,7 +658,7 @@ main( int argc, char *argv[] )
                     err );
             }
             else {
-                printf ( "\r%16s: %8.2f ms = %8.3fx10^6 interactions/s (%9.2lf GFLOPS) (Rel. error: %E)\n",
+                printf ( "\r%13s: %8.2f ms = %8.3fx10^6 interactions/s (%9.2lf GFLOPS) (Rel. error: %E)\n",
                     rgszAlgorithmNames[g_Algorithm],
                     ms,
                     interactionsPerSecond/1e6,

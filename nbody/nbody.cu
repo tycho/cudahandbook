@@ -655,19 +655,22 @@ main( int argc, char *argv[] )
                 fprintf( stderr, "Error computing timestep\n" );
                 exit(1);
             }
-            double interactionsPerSecond = (double) g_N*g_N*1000.0f / ms;
+            double interactionsPerSecond = (double) g_N*g_N*1000.0f / ms,
+                   flops = (g_N * g_N * (3 + 6 + 4 + 1 + 6)) * 1000.0f / ms;
             if ( interactionsPerSecond > 1e9 ) {
-                printf ( "\r%s: %8.2f ms = %8.3fx10^9 interactions/s (Rel. error: %E)\n",
+                printf ( "\r%16s: %8.2f ms = %8.3fx10^9 interactions/s (%9.2lf GFLOPS) (Rel. error: %E)\n",
                     rgszAlgorithmNames[g_Algorithm],
                     ms,
                     interactionsPerSecond/1e9,
+                    flops * 1e-9,
                     err );
             }
             else {
-                printf ( "\r%s: %8.2f ms = %8.3fx10^6 interactions/s (Rel. error: %E)\n",
+                printf ( "\r%16s: %8.2f ms = %8.3fx10^6 interactions/s (%9.2lf GFLOPS) (Rel. error: %E)\n",
                     rgszAlgorithmNames[g_Algorithm],
                     ms,
                     interactionsPerSecond/1e6,
+                    flops * 1e-9,
                     err );
             }
             kIterations++;

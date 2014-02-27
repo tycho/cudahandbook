@@ -24,6 +24,10 @@ endif
 CFLAGS :=
 CXXFLAGS := $(CFOPTIMIZE) -fno-strict-aliasing
 
+ifeq ($(uname_S),Darwin)
+CXXFLAGS += -Wa,-q
+endif
+
 ifeq ($(NO_OPENMP),)
 COMPILER_SUPPORTS_OPENMP := $(shell $(CXX) -fopenmp -E -dM -xc /dev/null 2>/dev/null | grep _OPENMP)
 ifneq ($(COMPILER_SUPPORTS_OPENMP),)

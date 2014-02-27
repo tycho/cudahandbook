@@ -38,6 +38,8 @@
 #define HAVE_SIMD
 #endif
 
+#include <stdlib.h>
+
 float
 ComputeGravitation_SIMD(
     float *force[3],

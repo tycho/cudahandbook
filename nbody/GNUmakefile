@@ -131,24 +131,24 @@ clean:
 	rm -f $(BIN)
 	rm -f $(OBJECTS)
 
-%.o: %.cu .cflags-$(BIN)
+%.o: %.cu .cflags
 	$(QUIET_NVCC)$(NVCC) $(CFLAGS) $(NVCCFLAGS) $(INCLUDE) -c -o $@ $<
 
-%.o: %.cpp .cflags-$(BIN)
+%.o: %.cpp .cflags
 	$(QUIET_CXX)$(CXX) $(CFLAGS) $(CXXFLAGS) $(INCLUDE) -c -o $@ $<
 
-$(BIN): $(OBJECTS)
+$(BIN): $(OBJECTS) .cflags
 	$(QUIET_LINK)$(LINK) -o $@ $(OBJECTS) $(LDFLAGS)
 
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 
 TRACK_CFLAGS = $(subst ','\'',$(CXX) $(NVCC) $(LINK) $(CFLAGS) $(CXXFLAGS) $(NVCCFLAGS) $(INCLUDE) $(LDFLAGS))
 
-.cflags-$(BIN): .force-cflags
+.cflags: .force-cflags
 	@FLAGS='$(TRACK_CFLAGS)'; \
-	if test x"$$FLAGS" != x"`cat .cflags-$(BIN) 2>/dev/null`" ; then \
+	if test x"$$FLAGS" != x"`cat .cflags 2>/dev/null`" ; then \
 		echo "    * rebuilding $(BIN): new build flags or prefix"; \
-		echo "$$FLAGS" > .cflags-$(BIN); \
+		echo "$$FLAGS" > .cflags; \
 	fi
 
 .PHONY: .force-cflags

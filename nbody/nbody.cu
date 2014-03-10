@@ -59,7 +59,45 @@
 
 using namespace cudahandbook::threading;
 
-inline void
+enum nbodyAlgorithm_enum {
+    CPU_AOS = 0,    /* This is the golden implementation */
+    CPU_AOS_tiled,
+    CPU_SOA,
+    CPU_SOA_tiled,
+#ifdef HAVE_SIMD
+    CPU_SIMD,
+#endif
+    GPU_AOS,
+    GPU_Shared,
+    GPU_Const,
+    multiGPU,
+// SM 3.0 only
+    GPU_Shuffle,
+    GPU_AOS_tiled,
+    GPU_AOS_tiled_const,
+//    GPU_Atomic
+};
+
+static const char *rgszAlgorithmNames[] = {
+    "CPU_AOS",
+    "CPU_AOS_tiled",
+    "CPU_SOA",
+    "CPU_SOA_tiled",
+#ifdef HAVE_SIMD
+    "CPU_SIMD",
+#endif
+    "GPU_AOS",
+    "GPU_Shared",
+    "GPU_Const",
+    "multiGPU",
+// SM 3.0 only
+    "GPU_Shuffle",
+    "GPU_AOS_tiled",
+    "GPU_AOS_tiled_const",
+//    "GPU_Atomic"
+};
+
+static inline void
 randomVector( float v[3] )
 {
     float lenSqr;
@@ -71,7 +109,7 @@ randomVector( float v[3] )
     } while ( lenSqr > 1.0f );
 }
 
-void
+static void
 randomUnitBodies( float *pos, float *vel, size_t N )
 {
     for ( size_t i = 0; i < N; i++ ) {
@@ -90,32 +128,32 @@ relError( float a, float b )
     return fabsf(a-b)/b;
 }
 
-bool g_bCUDAPresent;
-bool g_bSM30Present;
+static bool g_bCUDAPresent;
+static bool g_bSM30Present;
 
 float *g_hostAOS_PosMass;
 float *g_hostAOS_VelInvMass;
 float *g_hostAOS_Force;
 
-float *g_dptrAOS_PosMass;
-float *g_dptrAOS_Force;
+static float *g_dptrAOS_PosMass;
+static float *g_dptrAOS_Force;
 
 
 // Buffer to hold the golden version of the forces, used for comparison
 // Along with timing results, we report the maximum relative error with
 // respect to this array.
-float *g_hostAOS_Force_Golden;
+static float *g_hostAOS_Force_Golden;
 
 float *g_hostSOA_Pos[3];
 float *g_hostSOA_Force[3];
 float *g_hostSOA_Mass;
 float *g_hostSOA_InvMass;
 
-size_t g_N;
+static size_t g_N;
 
-float g_softening = 0.1f;
-float g_damping = 0.995f;
-float g_dt = 0.016f;
+static float g_softening = 0.1f;
+static float g_damping = 0.995f;
+static float g_dt = 0.016f;
 
 template<typename T>
 static T
@@ -143,7 +181,7 @@ relError( T a, T b )
 #include "nbody_GPU_Atomic.cuh"
 #endif
 
-void
+static void
 integrateGravitation_AOS( float *ppos, float *pvel, float *pforce, float dt, float damping, size_t N )
 {
     for ( size_t i = 0; i < N; i++ ) {
@@ -189,7 +227,7 @@ integrateGravitation_AOS( float *ppos, float *pvel, float *pforce, float dt, flo
     }
 }
 
-enum nbodyAlgorithm_enum g_Algorithm;
+static enum nbodyAlgorithm_enum g_Algorithm;
 
 //
 // g_maxAlgorithm is used to determine when to rotate g_Algorithm back to CPU_AOS
@@ -200,12 +238,12 @@ enum nbodyAlgorithm_enum g_Algorithm;
 // The CPU and GPU algorithms must be contiguous, and the logic in main() to
 // initialize this value must be modified if any new algorithms are added.
 //
-enum nbodyAlgorithm_enum g_maxAlgorithm;
-int g_bCrossCheck = 1;
-bool g_bUseSIMDForCrossCheck = false;
-int g_bNoCPU = 0;
+static enum nbodyAlgorithm_enum g_maxAlgorithm;
+static int g_bCrossCheck = 1;
+static bool g_bUseSIMDForCrossCheck = false;
+static int g_bNoCPU = 0;
 
-bool
+static bool
 ComputeGravitation(
     float *ms,
     float *maxRelError,
@@ -421,9 +459,7 @@ Error:
     return false;
 }
 
-int g_numCPUCores;
-
-workerThread *g_GPUThreadPool;
+static workerThread *g_GPUThreadPool;
 int g_numGPUs;
 
 struct gpuInit_struct
@@ -433,7 +469,7 @@ struct gpuInit_struct
     cudaError_t status;
 };
 
-void
+static void
 initializeGPU( void *_p )
 {
     cudaError_t status;

@@ -38,7 +38,6 @@
 #ifdef __ALTIVEC__
 #include <chTimer.h>
 
-#include "nbody.h"
 #include "bodybodyInteraction_AltiVec.h"
 #include "nbody_CPU_SSE.h"
 

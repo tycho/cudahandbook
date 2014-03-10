@@ -38,7 +38,6 @@
 #ifdef __SSE__
 #include <chTimer.h>
 
-#include "nbody.h"
 #include "bodybodyInteraction_SSE.h"
 #include "nbody_CPU_SIMD.h"
 

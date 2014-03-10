@@ -38,7 +38,6 @@
 #ifdef __ARM_NEON__
 #include <chTimer.h>
 
-#include "nbody.h"
 #include "bodybodyInteraction_NEON.h"
 #include "nbody_CPU_SIMD.h"
 

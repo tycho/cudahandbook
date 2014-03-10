@@ -38,94 +38,23 @@
 
 #include "nbody_CPU_SIMD.h"
 
-extern bool g_bCUDAPresent;
-
 extern float *g_hostAOS_PosMass;
 extern float *g_hostAOS_VelInvMass;
 extern float *g_hostAOS_Force;
-
-extern float *g_dptrAOS_PosMass;
-extern float *g_dptrAOS_Force;
-
-
-// Buffer to hold the golden version of the forces, used for comparison
-// Along with timing results, we report the maximum relative error with
-// respect to this array.
-extern float *g_hostAOS_Force_Golden;
 
 extern float *g_hostSOA_Pos[3];
 extern float *g_hostSOA_Force[3];
 extern float *g_hostSOA_Mass;
 extern float *g_hostSOA_InvMass;
 
-extern size_t g_N;
-
-extern float g_softening;
-extern float g_damping;
-extern float g_dt;
-
-enum nbodyAlgorithm_enum {
-    CPU_AOS = 0,    /* This is the golden implementation */
-    CPU_AOS_tiled,
-    CPU_SOA,
-    CPU_SOA_tiled,
-#ifdef HAVE_SIMD
-    CPU_SIMD,
-#endif
-    GPU_AOS,
-    GPU_Shared,
-    GPU_Const,
-    multiGPU,
-// SM 3.0 only
-    GPU_Shuffle,
-    GPU_AOS_tiled,
-    GPU_AOS_tiled_const,
-//    GPU_Atomic
-};
-
-
-static const char *rgszAlgorithmNames[] = {
-    "CPU_AOS",
-    "CPU_AOS_tiled",
-    "CPU_SOA",
-    "CPU_SOA_tiled",
-#ifdef HAVE_SIMD
-    "CPU_SIMD",
-#endif
-    "GPU_AOS",
-    "GPU_Shared",
-    "GPU_Const",
-    "multiGPU",
-// SM 3.0 only
-    "GPU_Shuffle",
-    "GPU_AOS_tiled",
-    "GPU_AOS_tiled_const",
-//    "GPU_Atomic"
-};
-
 // maximum number of GPUs supported by single-threaded multi-GPU
 const int g_maxGPUs = 32;
-
-extern const char *rgszAlgorithmNames[];
-
-extern enum nbodyAlgorithm_enum g_Algorithm;
-
-//
-// g_maxAlgorithm is used to determine when to rotate g_Algorithm back to CPU_AOS
-// If CUDA is present, it is CPU_SIMD_threaded, otherwise GPU_Shuffle
-// The CPU and GPU algorithms must be contiguous, and the logic in main() to
-// initialize this value must be modified if any new algorithms are added.
-//
-extern enum nbodyAlgorithm_enum g_maxAlgorithm;
-extern int g_bCrossCheck;
-extern int g_bNoCPU;
 
 extern int g_numCPUCores;
 extern int g_numGPUs;
 
 extern float ComputeGravitation_GPU_Shared( float *force, float const * const posMass, float softeningSquared, size_t N );
 extern float ComputeGravitation_multiGPU  ( float *force, float const * const posMass, float softeningSquared, size_t N );
-
 
 #endif
 

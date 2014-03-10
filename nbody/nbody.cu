@@ -611,19 +611,19 @@ main( int argc, char *argv[] )
 
     if ( g_numGPUs ) {
         g_GPUThreadPool = new workerThread[g_numGPUs];
-        for ( size_t i = 0; i < g_numGPUs; i++ ) {
+        for ( int i = 0; i < g_numGPUs; i++ ) {
             if ( ! g_GPUThreadPool[i].initialize( ) ) {
                 fprintf( stderr, "Error initializing thread pool\n" );
                 return 1;
             }
         }
-        for ( size_t i = 0; i < g_numGPUs; i++ ) {
-            gpuInit_struct initGPU = {(int)i};
+        for ( int i = 0; i < g_numGPUs; i++ ) {
+            gpuInit_struct initGPU = {i};
             g_GPUThreadPool[i].delegateSynchronous(
                 initializeGPU,
                 &initGPU );
             if ( cudaSuccess != initGPU.status ) {
-                fprintf( stderr, "Initializing GPU %zu failed "
+                fprintf( stderr, "Initializing GPU %d failed "
                     " with %d (%s)\n",
                     i,
                     initGPU.status,

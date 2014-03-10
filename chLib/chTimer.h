@@ -134,7 +134,7 @@ chTimerBandwidth( chTimerTimestamp *pStart, chTimerTimestamp *pStop, double cByt
 }
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif

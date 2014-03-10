@@ -119,8 +119,8 @@ extern enum nbodyAlgorithm_enum g_Algorithm;
 // initialize this value must be modified if any new algorithms are added.
 //
 extern enum nbodyAlgorithm_enum g_maxAlgorithm;
-extern bool g_bCrossCheck;
-extern bool g_bNoCPU;
+extern int g_bCrossCheck;
+extern int g_bNoCPU;
 
 extern cudahandbook::threading::workerThread *g_CPUThreadPool;
 extern int g_numCPUCores;

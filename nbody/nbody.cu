@@ -41,13 +41,14 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
 
 // for kbhit()
 #include <ch_conio.h>
 
 #include <math.h>
 
-#include <chCommandLine.h>
 #include <chError.h>
 #include <chThread.h>
 #include <chTimer.h>
@@ -200,9 +201,9 @@ enum nbodyAlgorithm_enum g_Algorithm;
 // initialize this value must be modified if any new algorithms are added.
 //
 enum nbodyAlgorithm_enum g_maxAlgorithm;
-bool g_bCrossCheck = true;
-bool g_bUseSIMDForCrossCheck = true;
-bool g_bNoCPU = false;
+int g_bCrossCheck = 1;
+bool g_bUseSIMDForCrossCheck = false;
+int g_bNoCPU = 0;
 
 bool
 ComputeGravitation(
@@ -421,7 +422,6 @@ Error:
     return false;
 }
 
-workerThread *g_CPUThreadPool;
 int g_numCPUCores;
 
 workerThread *g_GPUThreadPool;
@@ -447,54 +447,134 @@ Error:
     p->status = status;
 }
 
+static void usage(const char *argv0)
+{
+    printf( "Usage: nbody --bodies=N [--gpus=N] [--no-cpu] [--no-crosscheck] [--cycle-after=N] [--iterations=N]\n" );
+    printf( "    --bodies is multiplied by 1024 (default is 16)\n" );
+    printf( "    By default, the app checks results against a CPU implementation; \n" );
+    printf( "    disable this behavior with --no-crosscheck.\n" );
+    printf( "    The CPU implementation may be disabled with --no-cpu.\n" );
+    printf( "    --no-cpu implies --no-crosscheck.\n\n" );
+    printf( "    --iterations specifies a fixed number of iterations to execute\n" );
+    printf( "    --cycle-after specifies the number of iterations before rotating\n" );
+    printf( "                  to the next available algorithm\n" );
+}
+
 int
 main( int argc, char *argv[] )
 {
     cudaError_t status;
     // kiloparticles
-    int kParticles = 4, kMaxIterations = 0, kCycleAfter = 0;
+    int kParticles = 16, kMaxIterations = 0, kCycleAfter = 0;
 
-    if ( 1 == argc ) {
-        printf( "Usage: nbody --numbodies <N> [--nocpu] [--nocrosscheck] [--iterations <N>]\n" );
-        printf( "    --numbodies is multiplied by 1024 (default is 4)\n" );
-        printf( "    By default, the app checks results against a CPU implementation; \n" );
-        printf( "    disable this behavior with --nocrosscheck.\n" );
-        printf( "    The CPU implementation may be disabled with --nocpu.\n" );
-        printf( "    --nocpu implies --nocrosscheck.\n\n" );
-        printf( "    --nosimd uses serial CPU implementation instead of SIMD.\n" );
-        printf( "    --iterations specifies a fixed number of iterations to execute\n");
-        return 1;
+    static const struct option cli_options[] = {
+        { "bodies", required_argument, NULL, 'b' },
+        { "gpus", required_argument, NULL, 'g' },
+        { "no-cpu", no_argument, &g_bNoCPU, 1 },
+        { "no-crosscheck", no_argument, &g_bCrossCheck, 0 },
+        { "iterations", required_argument, NULL, 'i' },
+        { "cycle-after", required_argument, NULL, 'c' },
+        { "help", no_argument, NULL, 'h' },
+        { NULL, 0, NULL, 0 }
+    };
+
+    status = cudaGetDeviceCount( &g_numGPUs );
+    if (status != cudaSuccess)
+        g_numGPUs = 0;
+
+    while (1) {
+        int option = getopt_long(argc, argv, "n:i:c:", cli_options, NULL);
+
+        if (option == -1)
+            break;
+
+        switch (option) {
+        case 'c':
+            {
+                int v;
+                if (sscanf(optarg, "%d", &v) != 1) {
+                    fprintf(stderr, "ERROR: Couldn't parse integer argument for '--cycle-after'\n");
+                    return 1;
+                }
+                if (v < 1) {
+                    fprintf(stderr, "ERROR: Requested cycle size less than 1\n");
+                    return 1;
+                }
+                kCycleAfter = v;
+            }
+            break;
+        case 'i':
+            {
+                int v;
+                if (sscanf(optarg, "%d", &v) != 1) {
+                    fprintf(stderr, "ERROR: Couldn't parse integer argument for '--iterations'\n");
+                    return 1;
+                }
+                if (v < 1) {
+                    fprintf(stderr, "ERROR: Requested number of iterations less than 1\n");
+                    return 1;
+                }
+                kMaxIterations = v;
+            }
+            break;
+        case 'b':
+            {
+                int v;
+                if (sscanf(optarg, "%d", &v) != 1) {
+                    fprintf(stderr, "ERROR: Couldn't parse integer argument for '--bodies'\n");
+                    return 1;
+                }
+                if (v < 1) {
+                    printf("ERROR: Requested number of bodies less than 1");
+                    return 1;
+                }
+                kParticles = v;
+            }
+            break;
+        case 'g':
+            {
+                int v;
+                if (sscanf(optarg, "%d", &v) != 1) {
+                    fprintf(stderr, "ERROR: Couldn't parse integer argument for '--gpus'\n");
+                    return 1;
+                }
+                if (v < 1) {
+                    if (g_numGPUs > 0)
+                        fprintf(stderr, "Requested number of GPUs less than 1, disabling GPU algorithms.\n");
+                    g_numGPUs = 0;
+                    break;
+                }
+                if (v > g_numGPUs) {
+                    fprintf(stderr, "Requested %d GPUs, but only have %d, using all available GPUs.\n",
+                            v, g_numGPUs);
+                    break;
+                }
+                g_numGPUs = v;
+            }
+            break;
+        case 'h':
+        case '?':
+            usage(argv[0]);
+            return 1;
+        }
     }
 
     // for reproducible results for a given N
     srand(7);
 
-    {
-        g_numCPUCores = processorCount();
-        g_CPUThreadPool = new workerThread[g_numCPUCores];
-        for ( size_t i = 0; i < g_numCPUCores; i++ ) {
-            if ( ! g_CPUThreadPool[i].initialize( ) ) {
-                fprintf( stderr, "Error initializing thread pool\n" );
-                return 1;
-            }
-        }
-    }
-
-    status = cudaGetDeviceCount( &g_numGPUs );
-    g_bCUDAPresent = (cudaSuccess == status) && (g_numGPUs > 0);
+    g_bCUDAPresent = g_numGPUs > 0;
     if ( g_bCUDAPresent ) {
         cudaDeviceProp prop;
         CUDART_CHECK( cudaGetDeviceProperties( &prop, 0 ) );
         g_bSM30Present = prop.major >= 3;
     }
-    g_bNoCPU = chCommandLineGetBool( "nocpu", argc, argv );
+
     if ( g_bNoCPU && ! g_bCUDAPresent ) {
-        printf( "--nocpu specified, but no CUDA present...exiting\n" );
+        fprintf(stderr, "ERROR: --no-cpu specified, but no CUDA present\n" );
         exit(1);
     }
 
     if ( g_numGPUs ) {
-        chCommandLineGet( &g_numGPUs, "numgpus", argc, argv );
         g_GPUThreadPool = new workerThread[g_numGPUs];
         for ( size_t i = 0; i < g_numGPUs; i++ ) {
             if ( ! g_GPUThreadPool[i].initialize( ) ) {
@@ -518,19 +598,11 @@ main( int argc, char *argv[] )
         }
     }
 
-    g_bCrossCheck = ! chCommandLineGetBool( "nocrosscheck", argc, argv );
     if ( g_bNoCPU ) {
         g_bCrossCheck = false;
     }
-    if ( chCommandLineGetBool( "nosimd", argc, argv ) ) {
-        g_bUseSIMDForCrossCheck = false;
-    }
 
-    chCommandLineGet( &kParticles, "numbodies", argc, argv );
-    g_N = kParticles*1024;
-
-    chCommandLineGet( &kMaxIterations, "iterations", argc, argv);
-    chCommandLineGet( &kCycleAfter, "cycle", argc, argv);
+    g_N = kParticles * 1024;
 
     printf( "Running simulation with %d particles, crosscheck %s, CPU %s\n", (int) g_N,
         g_bCrossCheck ? "enabled" : "disabled",

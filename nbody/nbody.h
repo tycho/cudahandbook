@@ -38,8 +38,6 @@
 
 #include "nbody_CPU_SIMD.h"
 
-#include <chThread.h>
-
 extern bool g_bCUDAPresent;
 
 extern float *g_hostAOS_PosMass;
@@ -122,11 +120,8 @@ extern enum nbodyAlgorithm_enum g_maxAlgorithm;
 extern int g_bCrossCheck;
 extern int g_bNoCPU;
 
-extern cudahandbook::threading::workerThread *g_CPUThreadPool;
 extern int g_numCPUCores;
-
 extern int g_numGPUs;
-extern cudahandbook::threading::workerThread *g_GPUThreadPool;
 
 extern float ComputeGravitation_GPU_Shared( float *force, float const * const posMass, float softeningSquared, size_t N );
 extern float ComputeGravitation_multiGPU  ( float *force, float const * const posMass, float softeningSquared, size_t N );

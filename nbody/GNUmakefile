@@ -22,7 +22,7 @@ NVCCFLAGS := -O0 -g
 endif
 
 CFLAGS :=
-CXXFLAGS := $(CFOPTIMIZE) -fno-strict-aliasing
+CXXFLAGS := $(CFOPTIMIZE) -fno-strict-aliasing -Wall -Wunused -Wmissing-declarations -Wno-unknown-pragmas -Wno-long-long -Wno-overlength-strings
 
 ifeq ($(uname_S),Darwin)
 ifneq ($(findstring gcc,$(shell $(CXX) -v 2>&1)),)

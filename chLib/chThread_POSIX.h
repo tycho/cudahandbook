@@ -44,7 +44,6 @@
 
 #include <string.h>
 
-#include <new>
 #include <memory>
 #include <vector>
 #include <stdint.h>

@@ -25,7 +25,9 @@ CFLAGS :=
 CXXFLAGS := $(CFOPTIMIZE) -fno-strict-aliasing
 
 ifeq ($(uname_S),Darwin)
+ifneq ($(findstring gcc,$(shell $(CXX) -v 2>&1)),)
 CXXFLAGS += -Wa,-q
+endif
 endif
 
 ifeq ($(NO_OPENMP),)

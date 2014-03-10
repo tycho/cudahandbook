@@ -423,7 +423,6 @@ ComputeGravitation(
         default:
             fprintf(stderr, "Unrecognized algorithm index: %d\n", algorithm);
             abort();
-            break;
     }
 
     // SOA -> AOS

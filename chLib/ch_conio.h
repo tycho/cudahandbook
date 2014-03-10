@@ -43,7 +43,7 @@
 #include <fcntl.h>
 #include <sys/select.h>
 
-int kbhit(void)
+static int kbhit(void)
 {
   struct termios oldt, newt;
   int ch;
@@ -71,7 +71,7 @@ int kbhit(void)
 }
 
 #if 0
-int kbhit(void)
+static int kbhit(void)
 {
   struct timeval tv;
   fd_set read_fd;
@@ -107,7 +107,7 @@ if(FD_ISSET(0,&read_fd))
 
 // we only call getch() when kbhit() has told us there
 // is a pending keystroke
-int
+static int
 getch()
 {
     return getchar();

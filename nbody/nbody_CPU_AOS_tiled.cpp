@@ -41,6 +41,7 @@
 #include <chTimer.h>
 
 #include "bodybodyInteraction.cuh"
+#include "nbody_CPU_AOS_tiled.h"
 
 template<size_t nTile>
 static void

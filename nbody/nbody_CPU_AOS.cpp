@@ -40,6 +40,7 @@
 #include <chTimer.h>
 
 #include "bodybodyInteraction.cuh"
+#include "nbody_CPU_AOS.h"
 
 float
 ComputeGravitation_AOS(

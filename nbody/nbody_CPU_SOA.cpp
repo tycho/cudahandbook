@@ -42,6 +42,7 @@
 #include <chTimer.h>
 
 #include "bodybodyInteraction.cuh"
+#include "nbody_CPU_SOA.h"
 
 float
 ComputeGravitation_SOA(

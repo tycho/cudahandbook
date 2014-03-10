@@ -233,22 +233,21 @@ ComputeGravitation(
                             g_hostSOA_Mass,
                             g_softening*g_softening,
                             g_N );
-            for ( size_t i = 0; i < g_N; i++ ) {
-                g_hostAOS_Force_Golden[3*i+0] = g_hostSOA_Force[0][i];
-                g_hostAOS_Force_Golden[3*i+1] = g_hostSOA_Force[1][i];
-                g_hostAOS_Force_Golden[3*i+2] = g_hostSOA_Force[2][i];
-            }
-        }
-        else {
+        } else
 #endif
-            ComputeGravitation_AOS(
-                g_hostAOS_Force_Golden,
-                g_hostAOS_PosMass,
-                g_softening*g_softening,
-                g_N );
-#ifdef HAVE_SIMD
+        {
+            ComputeGravitation_SOA(
+                            g_hostSOA_Force,
+                            g_hostSOA_Pos,
+                            g_hostSOA_Mass,
+                            g_softening*g_softening,
+                            g_N );
         }
-#endif
+        for ( size_t i = 0; i < g_N; i++ ) {
+            g_hostAOS_Force_Golden[3*i+0] = g_hostSOA_Force[0][i];
+            g_hostAOS_Force_Golden[3*i+1] = g_hostSOA_Force[1][i];
+            g_hostAOS_Force_Golden[3*i+2] = g_hostSOA_Force[2][i];
+        }
     }
 
     /* Reset the force values so we know the function tested did work. */
